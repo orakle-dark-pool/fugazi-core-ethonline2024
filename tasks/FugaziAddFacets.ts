@@ -25,6 +25,7 @@ task("task:addFacets").setAction(async function (
   // load the addresses of the facets
   console.log("Loading facet addresses... ");
   const FugaziBalanceFacet = await deployments.get("FugaziBalanceFacet");
+  const FugaziViewerFacet = await deployments.get("FugaziViewerFacet");
 
   // construct the input array
   console.log("Constructing input array... ");
@@ -34,6 +35,12 @@ task("task:addFacets").setAction(async function (
       selectors: [
         "a6462d0a", // deposit
         "e94af36e", // withdraw
+      ],
+    },
+    {
+      facet: FugaziViewerFacet.address,
+      selectors: [
+        "08b3f650", // getBalance
       ],
     },
   ];

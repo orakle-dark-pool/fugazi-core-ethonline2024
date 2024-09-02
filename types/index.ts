@@ -36,6 +36,8 @@ export type { FugaziCore } from "./contracts/FugaziCore";
 export { FugaziCore__factory } from "./factories/contracts/FugaziCore__factory";
 export type { FugaziStorageLayout } from "./contracts/FugaziStorageLayout";
 export { FugaziStorageLayout__factory } from "./factories/contracts/FugaziStorageLayout__factory";
+export type { FugaziViewerFacet } from "./contracts/FugaziViewerFacet";
+export { FugaziViewerFacet__factory } from "./factories/contracts/FugaziViewerFacet__factory";
 export type { IFHERC20 } from "./contracts/interfaces/IFHERC20";
 export { IFHERC20__factory } from "./factories/contracts/interfaces/IFHERC20__factory";
 export type { Counter } from "./contracts/misc/Counter";

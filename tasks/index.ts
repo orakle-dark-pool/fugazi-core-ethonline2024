@@ -10,5 +10,7 @@ import "./claimFromDistributor";
 import "./FugaziAddFacets";
 
 // FugaziBalance
+import "./FugaziDeposit";
+import "./FugaziWithdraw";
 
 export default {};

@@ -40,6 +40,7 @@ const func: DeployFunction = async function () {
     console.log(chalk.yellow("Deploying Fugazi contracts..."));
     await deployNoArgContract("FugaziCore");
     await deployNoArgContract("FugaziBalanceFacet");
+    await deployNoArgContract("FugaziViewerFacet");
   }
 
   await main();

@@ -10,3 +10,4 @@ export type { tokens };
 export type { FugaziBalanceFacet } from "./FugaziBalanceFacet";
 export type { FugaziCore } from "./FugaziCore";
 export type { FugaziStorageLayout } from "./FugaziStorageLayout";
+export type { FugaziViewerFacet } from "./FugaziViewerFacet";
