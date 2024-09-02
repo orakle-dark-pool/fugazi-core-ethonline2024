@@ -14,7 +14,7 @@ contract TokenDistributor {
     uint8 internal _locked;
 
     modifier lock() {
-        require(_locked == 0, "TokenDistributor: reentrancy violation");
+        require(_locked == 0, "IDK what u are trying to do but don't do it");
         _locked = 1;
         _;
         _locked = 0;

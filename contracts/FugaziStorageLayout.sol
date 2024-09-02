@@ -45,6 +45,8 @@ contract FugaziStorageLayout is Permissioned {
     // errors
 
     // events
+
+    // amount is not emitted because it is encrypted
     event Deposit(address recipient, address token);
     event Withdraw(address recipient, address token);
 
@@ -57,4 +59,11 @@ contract FugaziStorageLayout is Permissioned {
 
     // storage variables
     mapping(address => accountStruct) internal account;
+
+    // functions
+
+    // auxiliary function for conversion from address to bytes32
+    function address2bytes32(address addr) internal pure returns (bytes32) {
+        return bytes32(bytes20(uint160(addr))) >> 96;
+    }
 }

@@ -22,14 +22,25 @@ const func: DeployFunction = async function () {
     }
   }
 
-  const Counter = await deploy("Counter", {
-    from: signer.address,
-    args: [],
-    log: true,
-    skipIfAlreadyDeployed: false,
-  });
+  // Deploy contracts without constructor arguments
+  const deployNoArgContract = async (contractName: string) => {
+    const contract = await deploy(contractName, {
+      from: signer.address,
+      log: true,
+      skipIfAlreadyDeployed: false,
+    });
 
-  console.log(`Counter contract: `, Counter.address);
+    console.log(`${contractName} contract deployed at: `, contract.address);
+  };
+
+  // Main deployment function
+  async function main() {
+    console.log("*".repeat(50));
+    console.log(chalk.yellow("Deploying Counter contract..."));
+    await deployNoArgContract("Counter");
+  }
+
+  await main();
 };
 
 export default func;
