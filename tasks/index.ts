@@ -3,6 +3,8 @@ import "./getCount";
 import "./addCount";
 
 // FugaziCore
-import "./addFacets";
+import "./FugaziAddFacets";
+
+// FugaziBalance
 
 export default {};
