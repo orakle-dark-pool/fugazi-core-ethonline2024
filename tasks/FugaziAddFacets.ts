@@ -1,4 +1,4 @@
-import { FugaziBalanceFacet__factory, FugaziCore } from "../types";
+import { FugaziCore } from "../types";
 import { task } from "hardhat/config";
 import type { TaskArguments } from "hardhat/types";
 import chalk from "chalk";
