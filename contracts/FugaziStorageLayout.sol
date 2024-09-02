@@ -37,4 +37,24 @@ contract FugaziStorageLayout is Permissioned {
     // storage variables
     address internal owner;
     mapping(bytes4 => address) internal selectorTofacet;
+
+    /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
+    /*                        Balance Facet                       */
+    /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
+
+    // errors
+
+    // events
+    event Deposit(address recipient, address token);
+    event Withdraw(address recipient, address token);
+
+    // modifiers
+
+    // structs
+    struct accountStruct {
+        mapping(bytes32 => euint32) balanceOf; // token (or LP) address => balance
+    }
+
+    // storage variables
+    mapping(address => accountStruct) internal account;
 }

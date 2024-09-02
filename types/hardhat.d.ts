@@ -54,9 +54,33 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Strings__factory>;
     getContractFactory(
+      name: "FugaziBalanceFacet",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.FugaziBalanceFacet__factory>;
+    getContractFactory(
+      name: "FugaziCore",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.FugaziCore__factory>;
+    getContractFactory(
+      name: "FugaziStorageLayout",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.FugaziStorageLayout__factory>;
+    getContractFactory(
+      name: "IFHERC20",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.IFHERC20__factory>;
+    getContractFactory(
       name: "Counter",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Counter__factory>;
+    getContractFactory(
+      name: "FHERC20",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.FHERC20__factory>;
+    getContractFactory(
+      name: "ERC20",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.ERC20__factory>;
 
     getContractAt(
       name: "Permissioned",
@@ -109,10 +133,40 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.Strings>;
     getContractAt(
+      name: "FugaziBalanceFacet",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.FugaziBalanceFacet>;
+    getContractAt(
+      name: "FugaziCore",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.FugaziCore>;
+    getContractAt(
+      name: "FugaziStorageLayout",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.FugaziStorageLayout>;
+    getContractAt(
+      name: "IFHERC20",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.IFHERC20>;
+    getContractAt(
       name: "Counter",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
     ): Promise<Contracts.Counter>;
+    getContractAt(
+      name: "FHERC20",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.FHERC20>;
+    getContractAt(
+      name: "ERC20",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.ERC20>;
 
     deployContract(
       name: "Permissioned",
@@ -155,9 +209,33 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Strings>;
     deployContract(
+      name: "FugaziBalanceFacet",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.FugaziBalanceFacet>;
+    deployContract(
+      name: "FugaziCore",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.FugaziCore>;
+    deployContract(
+      name: "FugaziStorageLayout",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.FugaziStorageLayout>;
+    deployContract(
+      name: "IFHERC20",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IFHERC20>;
+    deployContract(
       name: "Counter",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Counter>;
+    deployContract(
+      name: "FHERC20",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.FHERC20>;
+    deployContract(
+      name: "ERC20",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ERC20>;
 
     deployContract(
       name: "Permissioned",
@@ -210,10 +288,40 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Strings>;
     deployContract(
+      name: "FugaziBalanceFacet",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.FugaziBalanceFacet>;
+    deployContract(
+      name: "FugaziCore",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.FugaziCore>;
+    deployContract(
+      name: "FugaziStorageLayout",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.FugaziStorageLayout>;
+    deployContract(
+      name: "IFHERC20",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.IFHERC20>;
+    deployContract(
       name: "Counter",
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.Counter>;
+    deployContract(
+      name: "FHERC20",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.FHERC20>;
+    deployContract(
+      name: "ERC20",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.ERC20>;
 
     // default types
     getContractFactory(
