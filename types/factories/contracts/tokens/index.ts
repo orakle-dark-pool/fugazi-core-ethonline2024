@@ -2,3 +2,8 @@
 /* tslint:disable */
 /* eslint-disable */
 export { FHERC20__factory } from "./FHERC20__factory";
+export { FHERC20Mintable__factory } from "./FHERC20Mintable__factory";
+export { FakeEUR__factory } from "./FakeEUR__factory";
+export { FakeFGZ__factory } from "./FakeFGZ__factory";
+export { FakeUSD__factory } from "./FakeUSD__factory";
+export { TokenDistributor__factory } from "./TokenDistributor__factory";

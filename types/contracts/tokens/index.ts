@@ -2,3 +2,8 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { FHERC20 } from "./FHERC20";
+export type { FHERC20Mintable } from "./FHERC20Mintable";
+export type { FakeEUR } from "./FakeEUR";
+export type { FakeFGZ } from "./FakeFGZ";
+export type { FakeUSD } from "./FakeUSD";
+export type { TokenDistributor } from "./TokenDistributor";
