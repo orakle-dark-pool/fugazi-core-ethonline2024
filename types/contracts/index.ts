@@ -9,5 +9,6 @@ import type * as tokens from "./tokens";
 export type { tokens };
 export type { FugaziBalanceFacet } from "./FugaziBalanceFacet";
 export type { FugaziCore } from "./FugaziCore";
+export type { FugaziPoolRegistryFacet } from "./FugaziPoolRegistryFacet";
 export type { FugaziStorageLayout } from "./FugaziStorageLayout";
 export type { FugaziViewerFacet } from "./FugaziViewerFacet";

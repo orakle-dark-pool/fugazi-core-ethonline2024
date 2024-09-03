@@ -62,6 +62,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.FugaziCore__factory>;
     getContractFactory(
+      name: "FugaziPoolRegistryFacet",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.FugaziPoolRegistryFacet__factory>;
+    getContractFactory(
       name: "FugaziStorageLayout",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.FugaziStorageLayout__factory>;
@@ -167,6 +171,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.FugaziCore>;
     getContractAt(
+      name: "FugaziPoolRegistryFacet",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.FugaziPoolRegistryFacet>;
+    getContractAt(
       name: "FugaziStorageLayout",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -271,6 +280,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.FugaziCore>;
     deployContract(
+      name: "FugaziPoolRegistryFacet",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.FugaziPoolRegistryFacet>;
+    deployContract(
       name: "FugaziStorageLayout",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.FugaziStorageLayout>;
@@ -375,6 +388,11 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.FugaziCore>;
+    deployContract(
+      name: "FugaziPoolRegistryFacet",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.FugaziPoolRegistryFacet>;
     deployContract(
       name: "FugaziStorageLayout",
       args: any[],

@@ -22,8 +22,8 @@ contract FugaziBalanceFacet is FugaziStorageLayout {
         );
 
         // update storage
-        account[msg.sender].balanceOf[address2bytes32(token)] =
-            account[msg.sender].balanceOf[address2bytes32(token)] +
+        account[msg.sender].balanceOf[_address2bytes32(token)] =
+            account[msg.sender].balanceOf[_address2bytes32(token)] +
             spent;
 
         // emit event
@@ -40,12 +40,12 @@ contract FugaziBalanceFacet is FugaziStorageLayout {
         euint32 amount = FHE.asEuint32(_amount);
         amount = FHE.min(
             amount,
-            account[msg.sender].balanceOf[address2bytes32(token)]
+            account[msg.sender].balanceOf[_address2bytes32(token)]
         ); // you cannot withdraw more than you have
 
         // update storage
-        account[msg.sender].balanceOf[address2bytes32(token)] =
-            account[msg.sender].balanceOf[address2bytes32(token)] -
+        account[msg.sender].balanceOf[_address2bytes32(token)] =
+            account[msg.sender].balanceOf[_address2bytes32(token)] -
             amount;
 
         // transfer

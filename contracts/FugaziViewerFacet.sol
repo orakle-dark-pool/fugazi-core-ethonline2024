@@ -17,7 +17,7 @@ contract FugaziViewerFacet is FugaziStorageLayout {
         // reencrypt and return
         return
             FHE.sealoutput(
-                account[msg.sender].balanceOf[address2bytes32(token)],
+                account[msg.sender].balanceOf[_address2bytes32(token)],
                 permission.publicKey
             );
     }

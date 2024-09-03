@@ -34,6 +34,8 @@ export type { FugaziBalanceFacet } from "./contracts/FugaziBalanceFacet";
 export { FugaziBalanceFacet__factory } from "./factories/contracts/FugaziBalanceFacet__factory";
 export type { FugaziCore } from "./contracts/FugaziCore";
 export { FugaziCore__factory } from "./factories/contracts/FugaziCore__factory";
+export type { FugaziPoolRegistryFacet } from "./contracts/FugaziPoolRegistryFacet";
+export { FugaziPoolRegistryFacet__factory } from "./factories/contracts/FugaziPoolRegistryFacet__factory";
 export type { FugaziStorageLayout } from "./contracts/FugaziStorageLayout";
 export { FugaziStorageLayout__factory } from "./factories/contracts/FugaziStorageLayout__factory";
 export type { FugaziViewerFacet } from "./contracts/FugaziViewerFacet";

@@ -29,6 +29,7 @@ export interface FugaziStorageLayoutInterface extends Interface {
     nameOrSignatureOrTopic:
       | "Deposit"
       | "EIP712DomainChanged"
+      | "PoolCreated"
       | "Withdraw"
       | "facetAdded"
   ): EventFragment;
@@ -61,6 +62,24 @@ export namespace EIP712DomainChangedEvent {
   export type InputTuple = [];
   export type OutputTuple = [];
   export interface OutputObject {}
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace PoolCreatedEvent {
+  export type InputTuple = [
+    tokenX: AddressLike,
+    tokenY: AddressLike,
+    poolId: BytesLike
+  ];
+  export type OutputTuple = [tokenX: string, tokenY: string, poolId: string];
+  export interface OutputObject {
+    tokenX: string;
+    tokenY: string;
+    poolId: string;
+  }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
   export type Log = TypedEventLog<Event>;
@@ -189,6 +208,13 @@ export interface FugaziStorageLayout extends BaseContract {
     EIP712DomainChangedEvent.OutputObject
   >;
   getEvent(
+    key: "PoolCreated"
+  ): TypedContractEvent<
+    PoolCreatedEvent.InputTuple,
+    PoolCreatedEvent.OutputTuple,
+    PoolCreatedEvent.OutputObject
+  >;
+  getEvent(
     key: "Withdraw"
   ): TypedContractEvent<
     WithdrawEvent.InputTuple,
@@ -224,6 +250,17 @@ export interface FugaziStorageLayout extends BaseContract {
       EIP712DomainChangedEvent.InputTuple,
       EIP712DomainChangedEvent.OutputTuple,
       EIP712DomainChangedEvent.OutputObject
+    >;
+
+    "PoolCreated(address,address,bytes32)": TypedContractEvent<
+      PoolCreatedEvent.InputTuple,
+      PoolCreatedEvent.OutputTuple,
+      PoolCreatedEvent.OutputObject
+    >;
+    PoolCreated: TypedContractEvent<
+      PoolCreatedEvent.InputTuple,
+      PoolCreatedEvent.OutputTuple,
+      PoolCreatedEvent.OutputObject
     >;
 
     "Withdraw(address,address)": TypedContractEvent<

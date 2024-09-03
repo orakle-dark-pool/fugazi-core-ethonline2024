@@ -26,10 +26,8 @@ export type InEuint32Struct = { data: BytesLike };
 
 export type InEuint32StructOutput = [data: string] & { data: string };
 
-export interface FugaziBalanceFacetInterface extends Interface {
-  getFunction(
-    nameOrSignature: "deposit" | "eip712Domain" | "withdraw"
-  ): FunctionFragment;
+export interface FugaziPoolRegistryFacetInterface extends Interface {
+  getFunction(nameOrSignature: "createPool" | "eip712Domain"): FunctionFragment;
 
   getEvent(
     nameOrSignatureOrTopic:
@@ -41,24 +39,19 @@ export interface FugaziBalanceFacetInterface extends Interface {
   ): EventFragment;
 
   encodeFunctionData(
-    functionFragment: "deposit",
+    functionFragment: "createPool",
     values: [AddressLike, AddressLike, InEuint32Struct]
   ): string;
   encodeFunctionData(
     functionFragment: "eip712Domain",
     values?: undefined
   ): string;
-  encodeFunctionData(
-    functionFragment: "withdraw",
-    values: [AddressLike, AddressLike, InEuint32Struct]
-  ): string;
 
-  decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "createPool", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "eip712Domain",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
 }
 
 export namespace DepositEvent {
@@ -128,11 +121,11 @@ export namespace facetAddedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export interface FugaziBalanceFacet extends BaseContract {
-  connect(runner?: ContractRunner | null): FugaziBalanceFacet;
+export interface FugaziPoolRegistryFacet extends BaseContract {
+  connect(runner?: ContractRunner | null): FugaziPoolRegistryFacet;
   waitForDeployment(): Promise<this>;
 
-  interface: FugaziBalanceFacetInterface;
+  interface: FugaziPoolRegistryFacetInterface;
 
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,
@@ -171,9 +164,13 @@ export interface FugaziBalanceFacet extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  deposit: TypedContractMethod<
-    [recipient: AddressLike, token: AddressLike, _amount: InEuint32Struct],
-    [void],
+  createPool: TypedContractMethod<
+    [
+      tokenX: AddressLike,
+      tokenY: AddressLike,
+      _initialReserves: InEuint32Struct
+    ],
+    [string],
     "nonpayable"
   >;
 
@@ -193,21 +190,19 @@ export interface FugaziBalanceFacet extends BaseContract {
     "view"
   >;
 
-  withdraw: TypedContractMethod<
-    [recipient: AddressLike, token: AddressLike, _amount: InEuint32Struct],
-    [void],
-    "nonpayable"
-  >;
-
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
 
   getFunction(
-    nameOrSignature: "deposit"
+    nameOrSignature: "createPool"
   ): TypedContractMethod<
-    [recipient: AddressLike, token: AddressLike, _amount: InEuint32Struct],
-    [void],
+    [
+      tokenX: AddressLike,
+      tokenY: AddressLike,
+      _initialReserves: InEuint32Struct
+    ],
+    [string],
     "nonpayable"
   >;
   getFunction(
@@ -226,13 +221,6 @@ export interface FugaziBalanceFacet extends BaseContract {
       }
     ],
     "view"
-  >;
-  getFunction(
-    nameOrSignature: "withdraw"
-  ): TypedContractMethod<
-    [recipient: AddressLike, token: AddressLike, _amount: InEuint32Struct],
-    [void],
-    "nonpayable"
   >;
 
   getEvent(
