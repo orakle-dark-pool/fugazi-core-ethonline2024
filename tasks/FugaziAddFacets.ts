@@ -16,7 +16,7 @@ task("task:addFacets").setAction(async function (
   // load the FugaziCore contract
   console.log("Loading FugaziCore contract... ");
   const fugaziDeployment = await deployments.get("FugaziCore");
-  const FugaziDiamond = new ethers.Contract(
+  const FugaziCore = new ethers.Contract(
     fugaziDeployment.address,
     fugaziDeployment.abi,
     signer
@@ -26,6 +26,9 @@ task("task:addFacets").setAction(async function (
   console.log("Loading facet addresses... ");
   const FugaziBalanceFacet = await deployments.get("FugaziBalanceFacet");
   const FugaziViewerFacet = await deployments.get("FugaziViewerFacet");
+  const FugaziPoolRegistryFacet = await deployments.get(
+    "FugaziPoolRegistryFacet"
+  );
 
   // construct the input array
   console.log("Constructing input array... ");
@@ -41,6 +44,13 @@ task("task:addFacets").setAction(async function (
       facet: FugaziViewerFacet.address,
       selectors: [
         "08b3f650", // getBalance
+        "2ef61c21", // getPoolId
+      ],
+    },
+    {
+      facet: FugaziPoolRegistryFacet.address,
+      selectors: [
+        "46727639", // createPool
       ],
     },
   ];
@@ -54,7 +64,7 @@ task("task:addFacets").setAction(async function (
 
   // call the addFacet function
   console.log("Adding facets and selectors... ");
-  const tx = await FugaziDiamond.addFacet(facetAndSelectorsArray);
+  const tx = await FugaziCore.addFacet(facetAndSelectorsArray);
   await tx.wait();
   console.log("Facets and selectors added successfully! tx hash:", tx.hash);
 });

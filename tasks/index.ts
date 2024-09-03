@@ -13,4 +13,8 @@ import "./FugaziAddFacets";
 import "./FugaziDeposit";
 import "./FugaziWithdraw";
 
+// Fugazi PoolRegistry Facet
+import "./FugaziCreatePool";
+import "./FugaziGetPoolInfo";
+
 export default {};

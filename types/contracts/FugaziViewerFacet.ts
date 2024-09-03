@@ -30,7 +30,9 @@ export type PermissionStructOutput = [publicKey: string, signature: string] & {
 };
 
 export interface FugaziViewerFacetInterface extends Interface {
-  getFunction(nameOrSignature: "eip712Domain" | "getBalance"): FunctionFragment;
+  getFunction(
+    nameOrSignature: "eip712Domain" | "getBalance" | "getPoolId"
+  ): FunctionFragment;
 
   getEvent(
     nameOrSignatureOrTopic:
@@ -49,12 +51,17 @@ export interface FugaziViewerFacetInterface extends Interface {
     functionFragment: "getBalance",
     values: [AddressLike, PermissionStruct]
   ): string;
+  encodeFunctionData(
+    functionFragment: "getPoolId",
+    values: [AddressLike, AddressLike]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "eip712Domain",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getBalance", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getPoolId", data: BytesLike): Result;
 }
 
 export namespace DepositEvent {
@@ -189,6 +196,12 @@ export interface FugaziViewerFacet extends BaseContract {
     "view"
   >;
 
+  getPoolId: TypedContractMethod<
+    [tokenX: AddressLike, tokenY: AddressLike],
+    [string],
+    "view"
+  >;
+
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
@@ -214,6 +227,13 @@ export interface FugaziViewerFacet extends BaseContract {
     nameOrSignature: "getBalance"
   ): TypedContractMethod<
     [token: AddressLike, permission: PermissionStruct],
+    [string],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "getPoolId"
+  ): TypedContractMethod<
+    [tokenX: AddressLike, tokenY: AddressLike],
     [string],
     "view"
   >;

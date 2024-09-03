@@ -41,6 +41,7 @@ const func: DeployFunction = async function () {
     await deployNoArgContract("FugaziCore");
     await deployNoArgContract("FugaziBalanceFacet");
     await deployNoArgContract("FugaziViewerFacet");
+    await deployNoArgContract("FugaziPoolRegistryFacet");
   }
 
   await main();

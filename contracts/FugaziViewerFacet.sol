@@ -21,4 +21,15 @@ contract FugaziViewerFacet is FugaziStorageLayout {
                 permission.publicKey
             );
     }
+
+    /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
+    /*                          Pool Info                         */
+    /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
+
+    function getPoolId(
+        address tokenX,
+        address tokenY
+    ) external view returns (bytes32) {
+        return _getPoolId(tokenX, tokenY);
+    }
 }
