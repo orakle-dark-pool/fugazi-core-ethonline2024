@@ -30,6 +30,7 @@ task("task:addFacets").setAction(async function (
     "FugaziPoolRegistryFacet"
   );
   const FugaziOrderFacet = await deployments.get("FugaziOrderFacet");
+  const FugaziPoolActionFacet = await deployments.get("FugaziPoolActionFacet");
 
   // construct the input array
   console.log("Constructing input array... ");
@@ -61,6 +62,14 @@ task("task:addFacets").setAction(async function (
       selectors: [
         "ba198d5f", // submitOrder
         "f5398acd", // removeLiquidity
+      ],
+    },
+    {
+      facet: FugaziPoolActionFacet.address,
+      selectors: [
+        "eeb8f2b5", // settleBatch
+        "1bcc8d25", // claim
+        "b258399d", // claimProtocolOrder
       ],
     },
   ];

@@ -23,13 +23,17 @@ import type {
   TypedContractMethod,
 } from "../common";
 
-export interface FugaziPoolActionFacetInterface extends Interface {
+export type InEuint32Struct = { data: BytesLike };
+
+export type InEuint32StructOutput = [data: string] & { data: string };
+
+export type InEuint64Struct = { data: BytesLike };
+
+export type InEuint64StructOutput = [data: string] & { data: string };
+
+export interface FugaziOrderFacetInterface extends Interface {
   getFunction(
-    nameOrSignature:
-      | "claim"
-      | "claimProtocolOrder"
-      | "eip712Domain"
-      | "settleBatch"
+    nameOrSignature: "eip712Domain" | "removeLiquidity" | "submitOrder"
   ): FunctionFragment;
 
   getEvent(
@@ -45,33 +49,28 @@ export interface FugaziPoolActionFacetInterface extends Interface {
   ): EventFragment;
 
   encodeFunctionData(
-    functionFragment: "claim",
-    values: [BytesLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "claimProtocolOrder",
-    values: [BytesLike, BigNumberish]
-  ): string;
-  encodeFunctionData(
     functionFragment: "eip712Domain",
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "settleBatch",
-    values: [BytesLike]
+    functionFragment: "removeLiquidity",
+    values: [BytesLike, InEuint32Struct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "submitOrder",
+    values: [BytesLike, InEuint64Struct]
   ): string;
 
-  decodeFunctionResult(functionFragment: "claim", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "claimProtocolOrder",
-    data: BytesLike
-  ): Result;
   decodeFunctionResult(
     functionFragment: "eip712Domain",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "settleBatch",
+    functionFragment: "removeLiquidity",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "submitOrder",
     data: BytesLike
   ): Result;
 }
@@ -187,11 +186,11 @@ export namespace orderSubmittedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export interface FugaziPoolActionFacet extends BaseContract {
-  connect(runner?: ContractRunner | null): FugaziPoolActionFacet;
+export interface FugaziOrderFacet extends BaseContract {
+  connect(runner?: ContractRunner | null): FugaziOrderFacet;
   waitForDeployment(): Promise<this>;
 
-  interface: FugaziPoolActionFacetInterface;
+  interface: FugaziOrderFacetInterface;
 
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,
@@ -230,18 +229,6 @@ export interface FugaziPoolActionFacet extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  claim: TypedContractMethod<
-    [poolId: BytesLike, epoch: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
-
-  claimProtocolOrder: TypedContractMethod<
-    [poolId: BytesLike, epoch: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
-
   eip712Domain: TypedContractMethod<
     [],
     [
@@ -258,26 +245,22 @@ export interface FugaziPoolActionFacet extends BaseContract {
     "view"
   >;
 
-  settleBatch: TypedContractMethod<[poolId: BytesLike], [void], "nonpayable">;
+  removeLiquidity: TypedContractMethod<
+    [poolId: BytesLike, _exitAmount: InEuint32Struct],
+    [void],
+    "nonpayable"
+  >;
+
+  submitOrder: TypedContractMethod<
+    [poolId: BytesLike, _packedAmounts: InEuint64Struct],
+    [bigint],
+    "nonpayable"
+  >;
 
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
 
-  getFunction(
-    nameOrSignature: "claim"
-  ): TypedContractMethod<
-    [poolId: BytesLike, epoch: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
-  getFunction(
-    nameOrSignature: "claimProtocolOrder"
-  ): TypedContractMethod<
-    [poolId: BytesLike, epoch: BigNumberish],
-    [void],
-    "nonpayable"
-  >;
   getFunction(
     nameOrSignature: "eip712Domain"
   ): TypedContractMethod<
@@ -296,8 +279,19 @@ export interface FugaziPoolActionFacet extends BaseContract {
     "view"
   >;
   getFunction(
-    nameOrSignature: "settleBatch"
-  ): TypedContractMethod<[poolId: BytesLike], [void], "nonpayable">;
+    nameOrSignature: "removeLiquidity"
+  ): TypedContractMethod<
+    [poolId: BytesLike, _exitAmount: InEuint32Struct],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "submitOrder"
+  ): TypedContractMethod<
+    [poolId: BytesLike, _packedAmounts: InEuint64Struct],
+    [bigint],
+    "nonpayable"
+  >;
 
   getEvent(
     key: "Deposit"
