@@ -10,6 +10,7 @@ import {Permissioned, Permission} from "@fhenixprotocol/contracts/access/Permiss
 contract FugaziStorageLayout is Permissioned {
     // import FHE library
     using FHE for euint32;
+    using FHE for euint64;
 
     /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
     /*                            Core                            */
@@ -53,6 +54,7 @@ contract FugaziStorageLayout is Permissioned {
     // structs
     struct accountStruct {
         mapping(bytes32 => euint32) balanceOf; // token (or LP) address => balance
+        unclaimedOrderStruct[] unclaimedOrders;
     }
 
     // storage variables
@@ -99,7 +101,7 @@ contract FugaziStorageLayout is Permissioned {
         // total supply of LP tokens
         euint32 lpTotalSupply;
         // information of each batch
-        // TBD
+        mapping(uint32 => batchStruct) batch; // batch struct is defined in PoolActionFacet section
     }
 
     // storage variables
@@ -118,4 +120,80 @@ contract FugaziStorageLayout is Permissioned {
                 ? poolIdMapping[tokenX][tokenY]
                 : poolIdMapping[tokenY][tokenX];
     }
+
+    /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
+    /*                     Pool Action Facet                      */
+    /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
+
+    // errors
+    error PoolNotFound();
+    error EpochNotEnded();
+    error OrderAlreadyClaimed();
+    error NotValidSettlementStep();
+    error BatchIsInSettlement();
+
+    // events
+    event orderSubmitted(bytes32 poolId, uint32 epoch);
+    event batchSettled(bytes32 poolId, uint32 epoch);
+    event orderClaimed(bytes32 poolId, uint32 epoch, address claimer);
+
+    // modifiers
+    modifier onlyValidPool(bytes32 poolId) {
+        if (poolState[poolId].tokenX == address(0)) revert PoolNotFound();
+        _;
+    }
+
+    // structs
+    struct unpackedOrderStruct {
+        euint32 amountX;
+        euint32 amountY;
+        ebool isSwap;
+        ebool isNoiseReferenceX;
+        euint32 noiseAmplitude;
+    }
+
+    struct batchStruct {
+        // mapping of each individual swap & mint order
+        mapping(address => orderStruct) order;
+        ////////////////////////////////////////////////
+        //      state right before the settlement     //
+        ////////////////////////////////////////////////
+        euint32 reserveX0;
+        euint32 reserveY0;
+        euint32 swapX;
+        euint32 swapY;
+        euint32 mintX;
+        euint32 mintY;
+        euint32 feeX;
+        euint32 feeY;
+        ////////////////////////////////////////////////
+        //   intermidiate values used in settlement   //
+        ////////////////////////////////////////////////
+        euint32 XForPricing;
+        euint32 YForPricing;
+        ////////////////////////////////////////////////
+        //      state right after the settlement     //
+        ////////////////////////////////////////////////
+        euint32 reserveX1;
+        euint32 reserveY1;
+        euint32 outX;
+        euint32 outY;
+        euint32 lpIncrement;
+    }
+
+    struct orderStruct {
+        euint32 swapX;
+        euint32 swapY;
+        euint32 mintX;
+        euint32 mintY;
+        bool claimed;
+    }
+    struct unclaimedOrderStruct {
+        bytes32 poolId;
+        uint32 epoch;
+    }
+
+    // storage variables
+
+    // functions
 }

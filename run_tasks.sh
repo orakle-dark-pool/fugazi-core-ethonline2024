@@ -5,7 +5,6 @@ USE_TESTNET="false"
 
 # setting for localfhenix
 rm -rf deployments/localfhenix \
-&& rm -rf deployments/testnet \
 && npx hardhat compile \
 && npx hardhat localfhenix:start 
 
@@ -30,6 +29,11 @@ npx hardhat task:deposit --name FakeUSD --amount 32767 $( [[ "$USE_TESTNET" == "
 && npx hardhat task:deposit --name FakeEUR --amount 32767 $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" )
 
 # create pools
-npx hardhat task:createPool --name0 FakeFGZ --amount0 5000 --name1 FakeUSD --amount1 5000 $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" ) \
-&& npx hardhat task:createPool --name0 FakeUSD --amount0 5500 --name1 FakeEUR --amount1 5000 $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" ) \
-&& npx hardhat task:createPool --name0 FakeFGZ --amount0 5500 --name1 FakeEUR --amount1 5000 $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" )
+npx hardhat task:createPool --name0 FakeFGZ --amount0 7000 --name1 FakeUSD --amount1 7000 $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" ) \
+&& npx hardhat task:createPool --name0 FakeUSD --amount0 7777 --name1 FakeEUR --amount1 7000 $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" ) \
+&& npx hardhat task:createPool --name0 FakeFGZ --amount0 7777 --name1 FakeEUR --amount1 7000 $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" )
+
+# get pool infos
+npx hardhat task:getPoolInfo --name0 FakeFGZ --name1 FakeUSD $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" ) \
+&& npx hardhat task:getPoolInfo --name0 FakeUSD --name1 FakeEUR $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" ) \
+&& npx hardhat task:getPoolInfo --name0 FakeFGZ --name1 FakeEUR $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" )

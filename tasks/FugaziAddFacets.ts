@@ -29,6 +29,7 @@ task("task:addFacets").setAction(async function (
   const FugaziPoolRegistryFacet = await deployments.get(
     "FugaziPoolRegistryFacet"
   );
+  const FugaziOrderFacet = await deployments.get("FugaziOrderFacet");
 
   // construct the input array
   console.log("Constructing input array... ");
@@ -44,13 +45,22 @@ task("task:addFacets").setAction(async function (
       facet: FugaziViewerFacet.address,
       selectors: [
         "08b3f650", // getBalance
+        "a0ebf057", // getLPBalance
         "2ef61c21", // getPoolId
+        "09f2c019", // getPoolInfo
       ],
     },
     {
       facet: FugaziPoolRegistryFacet.address,
       selectors: [
         "46727639", // createPool
+      ],
+    },
+    {
+      facet: FugaziOrderFacet.address,
+      selectors: [
+        "ba198d5f", // submitOrder
+        "f5398acd", // removeLiquidity
       ],
     },
   ];

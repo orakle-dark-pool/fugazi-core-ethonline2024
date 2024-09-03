@@ -9,12 +9,14 @@ import "./claimFromDistributor";
 // FugaziCore
 import "./FugaziAddFacets";
 
-// FugaziBalance
+// FugaziBalanceFacet
 import "./FugaziDeposit";
 import "./FugaziWithdraw";
 
-// Fugazi PoolRegistry Facet
+// FugaziPoolRegistryFacet
 import "./FugaziCreatePool";
 import "./FugaziGetPoolInfo";
+
+// FugaziPoolActionFacet
 
 export default {};

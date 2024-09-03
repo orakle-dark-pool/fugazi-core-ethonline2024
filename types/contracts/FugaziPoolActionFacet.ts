@@ -23,8 +23,18 @@ import type {
   TypedContractMethod,
 } from "../common";
 
-export interface FugaziStorageLayoutInterface extends Interface {
-  getFunction(nameOrSignature: "eip712Domain"): FunctionFragment;
+export type InEuint32Struct = { data: BytesLike };
+
+export type InEuint32StructOutput = [data: string] & { data: string };
+
+export type InEuint64Struct = { data: BytesLike };
+
+export type InEuint64StructOutput = [data: string] & { data: string };
+
+export interface FugaziPoolActionFacetInterface extends Interface {
+  getFunction(
+    nameOrSignature: "eip712Domain" | "removeLiquidity" | "submitOrder"
+  ): FunctionFragment;
 
   getEvent(
     nameOrSignatureOrTopic:
@@ -42,9 +52,25 @@ export interface FugaziStorageLayoutInterface extends Interface {
     functionFragment: "eip712Domain",
     values?: undefined
   ): string;
+  encodeFunctionData(
+    functionFragment: "removeLiquidity",
+    values: [BytesLike, InEuint32Struct]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "submitOrder",
+    values: [BytesLike, InEuint64Struct]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "eip712Domain",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "removeLiquidity",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "submitOrder",
     data: BytesLike
   ): Result;
 }
@@ -160,11 +186,11 @@ export namespace orderSubmittedEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
-export interface FugaziStorageLayout extends BaseContract {
-  connect(runner?: ContractRunner | null): FugaziStorageLayout;
+export interface FugaziPoolActionFacet extends BaseContract {
+  connect(runner?: ContractRunner | null): FugaziPoolActionFacet;
   waitForDeployment(): Promise<this>;
 
-  interface: FugaziStorageLayoutInterface;
+  interface: FugaziPoolActionFacetInterface;
 
   queryFilter<TCEvent extends TypedContractEvent>(
     event: TCEvent,
@@ -219,6 +245,18 @@ export interface FugaziStorageLayout extends BaseContract {
     "view"
   >;
 
+  removeLiquidity: TypedContractMethod<
+    [poolId: BytesLike, _exitAmount: InEuint32Struct],
+    [void],
+    "nonpayable"
+  >;
+
+  submitOrder: TypedContractMethod<
+    [poolId: BytesLike, _packedAmounts: InEuint64Struct],
+    [bigint],
+    "nonpayable"
+  >;
+
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
@@ -239,6 +277,20 @@ export interface FugaziStorageLayout extends BaseContract {
       }
     ],
     "view"
+  >;
+  getFunction(
+    nameOrSignature: "removeLiquidity"
+  ): TypedContractMethod<
+    [poolId: BytesLike, _exitAmount: InEuint32Struct],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "submitOrder"
+  ): TypedContractMethod<
+    [poolId: BytesLike, _packedAmounts: InEuint64Struct],
+    [bigint],
+    "nonpayable"
   >;
 
   getEvent(

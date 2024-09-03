@@ -62,6 +62,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.FugaziCore__factory>;
     getContractFactory(
+      name: "FugaziOrderFacet",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.FugaziOrderFacet__factory>;
+    getContractFactory(
+      name: "FugaziPoolActionFacet",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.FugaziPoolActionFacet__factory>;
+    getContractFactory(
       name: "FugaziPoolRegistryFacet",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.FugaziPoolRegistryFacet__factory>;
@@ -171,6 +179,16 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.FugaziCore>;
     getContractAt(
+      name: "FugaziOrderFacet",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.FugaziOrderFacet>;
+    getContractAt(
+      name: "FugaziPoolActionFacet",
+      address: string | ethers.Addressable,
+      signer?: ethers.Signer
+    ): Promise<Contracts.FugaziPoolActionFacet>;
+    getContractAt(
       name: "FugaziPoolRegistryFacet",
       address: string | ethers.Addressable,
       signer?: ethers.Signer
@@ -280,6 +298,14 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.FugaziCore>;
     deployContract(
+      name: "FugaziOrderFacet",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.FugaziOrderFacet>;
+    deployContract(
+      name: "FugaziPoolActionFacet",
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.FugaziPoolActionFacet>;
+    deployContract(
       name: "FugaziPoolRegistryFacet",
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.FugaziPoolRegistryFacet>;
@@ -388,6 +414,16 @@ declare module "hardhat/types/runtime" {
       args: any[],
       signerOrOptions?: ethers.Signer | DeployContractOptions
     ): Promise<Contracts.FugaziCore>;
+    deployContract(
+      name: "FugaziOrderFacet",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.FugaziOrderFacet>;
+    deployContract(
+      name: "FugaziPoolActionFacet",
+      args: any[],
+      signerOrOptions?: ethers.Signer | DeployContractOptions
+    ): Promise<Contracts.FugaziPoolActionFacet>;
     deployContract(
       name: "FugaziPoolRegistryFacet",
       args: any[],

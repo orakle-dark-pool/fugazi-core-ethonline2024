@@ -35,7 +35,7 @@ task("task:createPool")
       FugaziPoolRegistryFacetDeployment.abi,
       signer
     ) as unknown as FugaziPoolRegistryFacet;
-    const FugaziViwerFacet = new ethers.Contract(
+    const FugaziViewerFacet = new ethers.Contract(
       FugaziCoreDeployment.address,
       FugaziViewerFacetDeployment.abi,
       signer
@@ -49,10 +49,14 @@ task("task:createPool")
       )
     );
 
+    ///////////////////////////////////////////////////////////////
+    //                   Before Pool Creation                    //
+    ///////////////////////////////////////////////////////////////
+
     // try getPoolId before creation
     console.log("Getting pool id before creation... ");
     try {
-      const poolId = await FugaziViwerFacet.getPoolId(
+      const poolId = await FugaziViewerFacet.getPoolId(
         token0Address,
         token1Address
       );
@@ -60,6 +64,44 @@ task("task:createPool")
     } catch (e) {
       console.log("Failed to load poolId", e);
     }
+
+    // generate the permit for viewing encrypted balance in Fugazi
+    let permitForFugazi = await fhenixjs.generatePermit(
+      FugaziCoreDeployment.address,
+      undefined, // use the internal provider
+      signer
+    );
+
+    // get token balances before creation
+    console.log("Getting token balances before creation... ");
+    const encryptedBalance0Before = await FugaziViewerFacet.getBalance(
+      token0Address,
+      permitForFugazi
+    );
+    const decryptedBalance0Before = fhenixjs.unseal(
+      FugaziCoreDeployment.address,
+      encryptedBalance0Before
+    );
+    console.log(
+      `Got decrypted balance of ${token0Name} in Fugazi before withdraw:`,
+      decryptedBalance0Before.toString()
+    );
+    const encryptedBalance1Before = await FugaziViewerFacet.getBalance(
+      token1Address,
+      permitForFugazi
+    );
+    const decryptedBalance1Before = fhenixjs.unseal(
+      FugaziCoreDeployment.address,
+      encryptedBalance1Before
+    );
+    console.log(
+      `Got decrypted balance of ${token1Name} in Fugazi before withdraw:`,
+      decryptedBalance1Before.toString()
+    );
+
+    ///////////////////////////////////////////////////////////////
+    //                      Create new Pool                      //
+    ///////////////////////////////////////////////////////////////
 
     //construct input
     console.log("Constructing input... ");
@@ -100,10 +142,14 @@ task("task:createPool")
       console.log("Error creating pool: ", e);
     }
 
+    ///////////////////////////////////////////////////////////////
+    //                    After Pool Creation                    //
+    ///////////////////////////////////////////////////////////////
+
     // get pool id after creation
     console.log("Getting pool id after creation... ");
     try {
-      const poolId = await FugaziViwerFacet.getPoolId(
+      const poolId = await FugaziViewerFacet.getPoolId(
         token0Address,
         token1Address
       );
@@ -111,4 +157,47 @@ task("task:createPool")
     } catch (e) {
       console.log("Failed to load poolId", e);
     }
+
+    // get token balances after creation
+    console.log("Getting token balances after creation... ");
+    const encryptedBalance0After = await FugaziViewerFacet.getBalance(
+      token0Address,
+      permitForFugazi
+    );
+    const decryptedBalance0After = fhenixjs.unseal(
+      FugaziCoreDeployment.address,
+      encryptedBalance0After
+    );
+    console.log(
+      `Got decrypted balance of ${token0Name} in Fugazi after withdraw:`,
+      decryptedBalance0After.toString()
+    );
+    const encryptedBalance1After = await FugaziViewerFacet.getBalance(
+      token1Address,
+      permitForFugazi
+    );
+    const decryptedBalance1After = fhenixjs.unseal(
+      FugaziCoreDeployment.address,
+      encryptedBalance1After
+    );
+    console.log(
+      `Got decrypted balance of ${token1Name} in Fugazi after withdraw:`,
+      decryptedBalance1After.toString()
+    );
+
+    // get LP token balance after creation
+    console.log("Getting LP token balance after creation... ");
+    const encryptedLPBalance = await FugaziViewerFacet.getLPBalance(
+      token0Address,
+      token1Address,
+      permitForFugazi
+    );
+    const decryptedLPBalance = fhenixjs.unseal(
+      FugaziCoreDeployment.address,
+      encryptedLPBalance
+    );
+    console.log(
+      `Got decrypted LP balance of LP token in Fugazi after withdraw:`,
+      decryptedLPBalance.toString()
+    );
   });

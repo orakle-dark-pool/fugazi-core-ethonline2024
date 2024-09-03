@@ -3,6 +3,7 @@
 /* eslint-disable */
 import type {
   BaseContract,
+  BigNumberish,
   BytesLike,
   FunctionFragment,
   Result,
@@ -37,7 +38,10 @@ export interface FugaziBalanceFacetInterface extends Interface {
       | "EIP712DomainChanged"
       | "PoolCreated"
       | "Withdraw"
+      | "batchSettled"
       | "facetAdded"
+      | "orderClaimed"
+      | "orderSubmitted"
   ): EventFragment;
 
   encodeFunctionData(
@@ -115,12 +119,56 @@ export namespace WithdrawEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
+export namespace batchSettledEvent {
+  export type InputTuple = [poolId: BytesLike, epoch: BigNumberish];
+  export type OutputTuple = [poolId: string, epoch: bigint];
+  export interface OutputObject {
+    poolId: string;
+    epoch: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
 export namespace facetAddedEvent {
   export type InputTuple = [selector: BytesLike, facet: AddressLike];
   export type OutputTuple = [selector: string, facet: string];
   export interface OutputObject {
     selector: string;
     facet: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace orderClaimedEvent {
+  export type InputTuple = [
+    poolId: BytesLike,
+    epoch: BigNumberish,
+    claimer: AddressLike
+  ];
+  export type OutputTuple = [poolId: string, epoch: bigint, claimer: string];
+  export interface OutputObject {
+    poolId: string;
+    epoch: bigint;
+    claimer: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace orderSubmittedEvent {
+  export type InputTuple = [poolId: BytesLike, epoch: BigNumberish];
+  export type OutputTuple = [poolId: string, epoch: bigint];
+  export interface OutputObject {
+    poolId: string;
+    epoch: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -264,11 +312,32 @@ export interface FugaziBalanceFacet extends BaseContract {
     WithdrawEvent.OutputObject
   >;
   getEvent(
+    key: "batchSettled"
+  ): TypedContractEvent<
+    batchSettledEvent.InputTuple,
+    batchSettledEvent.OutputTuple,
+    batchSettledEvent.OutputObject
+  >;
+  getEvent(
     key: "facetAdded"
   ): TypedContractEvent<
     facetAddedEvent.InputTuple,
     facetAddedEvent.OutputTuple,
     facetAddedEvent.OutputObject
+  >;
+  getEvent(
+    key: "orderClaimed"
+  ): TypedContractEvent<
+    orderClaimedEvent.InputTuple,
+    orderClaimedEvent.OutputTuple,
+    orderClaimedEvent.OutputObject
+  >;
+  getEvent(
+    key: "orderSubmitted"
+  ): TypedContractEvent<
+    orderSubmittedEvent.InputTuple,
+    orderSubmittedEvent.OutputTuple,
+    orderSubmittedEvent.OutputObject
   >;
 
   filters: {
@@ -316,6 +385,17 @@ export interface FugaziBalanceFacet extends BaseContract {
       WithdrawEvent.OutputObject
     >;
 
+    "batchSettled(bytes32,uint32)": TypedContractEvent<
+      batchSettledEvent.InputTuple,
+      batchSettledEvent.OutputTuple,
+      batchSettledEvent.OutputObject
+    >;
+    batchSettled: TypedContractEvent<
+      batchSettledEvent.InputTuple,
+      batchSettledEvent.OutputTuple,
+      batchSettledEvent.OutputObject
+    >;
+
     "facetAdded(bytes4,address)": TypedContractEvent<
       facetAddedEvent.InputTuple,
       facetAddedEvent.OutputTuple,
@@ -325,6 +405,28 @@ export interface FugaziBalanceFacet extends BaseContract {
       facetAddedEvent.InputTuple,
       facetAddedEvent.OutputTuple,
       facetAddedEvent.OutputObject
+    >;
+
+    "orderClaimed(bytes32,uint32,address)": TypedContractEvent<
+      orderClaimedEvent.InputTuple,
+      orderClaimedEvent.OutputTuple,
+      orderClaimedEvent.OutputObject
+    >;
+    orderClaimed: TypedContractEvent<
+      orderClaimedEvent.InputTuple,
+      orderClaimedEvent.OutputTuple,
+      orderClaimedEvent.OutputObject
+    >;
+
+    "orderSubmitted(bytes32,uint32)": TypedContractEvent<
+      orderSubmittedEvent.InputTuple,
+      orderSubmittedEvent.OutputTuple,
+      orderSubmittedEvent.OutputObject
+    >;
+    orderSubmitted: TypedContractEvent<
+      orderSubmittedEvent.InputTuple,
+      orderSubmittedEvent.OutputTuple,
+      orderSubmittedEvent.OutputObject
     >;
   };
 }

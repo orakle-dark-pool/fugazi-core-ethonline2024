@@ -3,6 +3,7 @@
 /* eslint-disable */
 import type {
   BaseContract,
+  BigNumberish,
   BytesLike,
   FunctionFragment,
   Result,
@@ -31,7 +32,12 @@ export type PermissionStructOutput = [publicKey: string, signature: string] & {
 
 export interface FugaziViewerFacetInterface extends Interface {
   getFunction(
-    nameOrSignature: "eip712Domain" | "getBalance" | "getPoolId"
+    nameOrSignature:
+      | "eip712Domain"
+      | "getBalance"
+      | "getLPBalance"
+      | "getPoolId"
+      | "getPoolInfo"
   ): FunctionFragment;
 
   getEvent(
@@ -40,7 +46,10 @@ export interface FugaziViewerFacetInterface extends Interface {
       | "EIP712DomainChanged"
       | "PoolCreated"
       | "Withdraw"
+      | "batchSettled"
       | "facetAdded"
+      | "orderClaimed"
+      | "orderSubmitted"
   ): EventFragment;
 
   encodeFunctionData(
@@ -52,8 +61,16 @@ export interface FugaziViewerFacetInterface extends Interface {
     values: [AddressLike, PermissionStruct]
   ): string;
   encodeFunctionData(
+    functionFragment: "getLPBalance",
+    values: [AddressLike, AddressLike, PermissionStruct]
+  ): string;
+  encodeFunctionData(
     functionFragment: "getPoolId",
     values: [AddressLike, AddressLike]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getPoolInfo",
+    values: [BytesLike]
   ): string;
 
   decodeFunctionResult(
@@ -61,7 +78,15 @@ export interface FugaziViewerFacetInterface extends Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "getBalance", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getLPBalance",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "getPoolId", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getPoolInfo",
+    data: BytesLike
+  ): Result;
 }
 
 export namespace DepositEvent {
@@ -118,12 +143,56 @@ export namespace WithdrawEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
+export namespace batchSettledEvent {
+  export type InputTuple = [poolId: BytesLike, epoch: BigNumberish];
+  export type OutputTuple = [poolId: string, epoch: bigint];
+  export interface OutputObject {
+    poolId: string;
+    epoch: bigint;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
 export namespace facetAddedEvent {
   export type InputTuple = [selector: BytesLike, facet: AddressLike];
   export type OutputTuple = [selector: string, facet: string];
   export interface OutputObject {
     selector: string;
     facet: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace orderClaimedEvent {
+  export type InputTuple = [
+    poolId: BytesLike,
+    epoch: BigNumberish,
+    claimer: AddressLike
+  ];
+  export type OutputTuple = [poolId: string, epoch: bigint, claimer: string];
+  export interface OutputObject {
+    poolId: string;
+    epoch: bigint;
+    claimer: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace orderSubmittedEvent {
+  export type InputTuple = [poolId: BytesLike, epoch: BigNumberish];
+  export type OutputTuple = [poolId: string, epoch: bigint];
+  export interface OutputObject {
+    poolId: string;
+    epoch: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -196,9 +265,21 @@ export interface FugaziViewerFacet extends BaseContract {
     "view"
   >;
 
+  getLPBalance: TypedContractMethod<
+    [tokenX: AddressLike, tokenY: AddressLike, permission: PermissionStruct],
+    [string],
+    "view"
+  >;
+
   getPoolId: TypedContractMethod<
     [tokenX: AddressLike, tokenY: AddressLike],
     [string],
+    "view"
+  >;
+
+  getPoolInfo: TypedContractMethod<
+    [poolId: BytesLike],
+    [[bigint, bigint]],
     "view"
   >;
 
@@ -231,12 +312,22 @@ export interface FugaziViewerFacet extends BaseContract {
     "view"
   >;
   getFunction(
+    nameOrSignature: "getLPBalance"
+  ): TypedContractMethod<
+    [tokenX: AddressLike, tokenY: AddressLike, permission: PermissionStruct],
+    [string],
+    "view"
+  >;
+  getFunction(
     nameOrSignature: "getPoolId"
   ): TypedContractMethod<
     [tokenX: AddressLike, tokenY: AddressLike],
     [string],
     "view"
   >;
+  getFunction(
+    nameOrSignature: "getPoolInfo"
+  ): TypedContractMethod<[poolId: BytesLike], [[bigint, bigint]], "view">;
 
   getEvent(
     key: "Deposit"
@@ -267,11 +358,32 @@ export interface FugaziViewerFacet extends BaseContract {
     WithdrawEvent.OutputObject
   >;
   getEvent(
+    key: "batchSettled"
+  ): TypedContractEvent<
+    batchSettledEvent.InputTuple,
+    batchSettledEvent.OutputTuple,
+    batchSettledEvent.OutputObject
+  >;
+  getEvent(
     key: "facetAdded"
   ): TypedContractEvent<
     facetAddedEvent.InputTuple,
     facetAddedEvent.OutputTuple,
     facetAddedEvent.OutputObject
+  >;
+  getEvent(
+    key: "orderClaimed"
+  ): TypedContractEvent<
+    orderClaimedEvent.InputTuple,
+    orderClaimedEvent.OutputTuple,
+    orderClaimedEvent.OutputObject
+  >;
+  getEvent(
+    key: "orderSubmitted"
+  ): TypedContractEvent<
+    orderSubmittedEvent.InputTuple,
+    orderSubmittedEvent.OutputTuple,
+    orderSubmittedEvent.OutputObject
   >;
 
   filters: {
@@ -319,6 +431,17 @@ export interface FugaziViewerFacet extends BaseContract {
       WithdrawEvent.OutputObject
     >;
 
+    "batchSettled(bytes32,uint32)": TypedContractEvent<
+      batchSettledEvent.InputTuple,
+      batchSettledEvent.OutputTuple,
+      batchSettledEvent.OutputObject
+    >;
+    batchSettled: TypedContractEvent<
+      batchSettledEvent.InputTuple,
+      batchSettledEvent.OutputTuple,
+      batchSettledEvent.OutputObject
+    >;
+
     "facetAdded(bytes4,address)": TypedContractEvent<
       facetAddedEvent.InputTuple,
       facetAddedEvent.OutputTuple,
@@ -328,6 +451,28 @@ export interface FugaziViewerFacet extends BaseContract {
       facetAddedEvent.InputTuple,
       facetAddedEvent.OutputTuple,
       facetAddedEvent.OutputObject
+    >;
+
+    "orderClaimed(bytes32,uint32,address)": TypedContractEvent<
+      orderClaimedEvent.InputTuple,
+      orderClaimedEvent.OutputTuple,
+      orderClaimedEvent.OutputObject
+    >;
+    orderClaimed: TypedContractEvent<
+      orderClaimedEvent.InputTuple,
+      orderClaimedEvent.OutputTuple,
+      orderClaimedEvent.OutputObject
+    >;
+
+    "orderSubmitted(bytes32,uint32)": TypedContractEvent<
+      orderSubmittedEvent.InputTuple,
+      orderSubmittedEvent.OutputTuple,
+      orderSubmittedEvent.OutputObject
+    >;
+    orderSubmitted: TypedContractEvent<
+      orderSubmittedEvent.InputTuple,
+      orderSubmittedEvent.OutputTuple,
+      orderSubmittedEvent.OutputObject
     >;
   };
 }

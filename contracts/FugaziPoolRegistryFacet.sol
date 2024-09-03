@@ -61,7 +61,7 @@ contract FugaziPoolRegistryFacet is FugaziStorageLayout {
         /*                       Update Storage                       */
         /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
 
-        // deduct the token balance of caller
+        // deduct the token balances of caller
         account[msg.sender].balanceOf[_address2bytes32(tokenX)] =
             account[msg.sender].balanceOf[_address2bytes32(tokenX)] -
             availableX;
