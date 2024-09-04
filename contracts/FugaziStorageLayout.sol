@@ -122,7 +122,7 @@ contract FugaziStorageLayout is Permissioned {
     }
 
     /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
-    /*                     Pool Action Facet                      */
+    /*                 Order & Pool Action Facet                  */
     /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
 
     // errors
@@ -196,4 +196,15 @@ contract FugaziStorageLayout is Permissioned {
     // storage variables
 
     // functions
+
+    /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
+    /*                        Viewer Facet                        */
+    /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
+
+    struct unclaimedOrderForViewerStruct {
+        bytes32 poolId;
+        uint32 orderEpoch;
+        uint32 poolEpoch;
+        uint32 lastSettlement;
+    }
 }

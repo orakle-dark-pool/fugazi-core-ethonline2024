@@ -56,4 +56,67 @@ contract FugaziViewerFacet is FugaziStorageLayout {
 
         return (epoch, lastSettlement);
     }
+    /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
+    /*                         User Orders                        */
+    /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
+
+    // get unclaimed orders' length
+    function getUnclaimedOrdersLength() external view returns (uint256) {
+        return account[msg.sender].unclaimedOrders.length;
+    }
+
+    // get unclaimed order
+    function getUnclaimedOrder(
+        uint256 index
+    ) external view returns (unclaimedOrderStruct memory) {
+        return account[msg.sender].unclaimedOrders[index];
+    }
+
+    // get unclaimed orders at once
+    function getUnclaimedOrders()
+        external
+        view
+        returns (unclaimedOrderForViewerStruct[] memory)
+    {
+        // get length
+        uint len = account[msg.sender].unclaimedOrders.length;
+
+        // create array
+        unclaimedOrderForViewerStruct[]
+            memory orders = new unclaimedOrderForViewerStruct[](len);
+
+        // fill array
+        bytes32 poolId;
+        uint32 orderEpoch;
+        uint32 poolEpoch;
+        uint32 lastSettlement;
+        for (uint i = 0; i < len; i++) {
+            poolId = account[msg.sender].unclaimedOrders[i].poolId;
+            orderEpoch = account[msg.sender].unclaimedOrders[i].epoch;
+            (poolEpoch, lastSettlement) = getPoolInfo(poolId);
+            orders[i].poolId = poolId;
+            orders[i].orderEpoch = orderEpoch;
+            orders[i].poolEpoch = poolEpoch;
+            orders[i].lastSettlement = lastSettlement;
+        }
+
+        // return
+        return orders;
+    }
+
+    // get number of unclaimed orders of protocol owned account
+    function getUnclaimedProtocolOrdersLength()
+        external
+        view
+        returns (uint256)
+    {
+        return account[address(this)].unclaimedOrders.length;
+    }
+
+    // get uncloimed order of protocol owned account
+    function getUnclaimedProtocolOrder(
+        uint256 index
+    ) external view returns (unclaimedOrderStruct memory) {
+        return account[address(this)].unclaimedOrders[index];
+    }
 }

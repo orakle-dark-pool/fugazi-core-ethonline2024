@@ -54,4 +54,34 @@ contract FugaziBalanceFacet is FugaziStorageLayout {
         // emit event
         emit Withdraw(recipient, token);
     }
+
+    // donateToProtocol
+    function donateToProtocol(
+        bytes32 poolId,
+        address token,
+        inEuint32 calldata _amount
+    ) external onlyValidPool(poolId) {
+        // transform type
+        euint32 amount = FHE.asEuint32(_amount);
+
+        // deduct user balance
+        account[msg.sender].balanceOf[_address2bytes32(token)] =
+            account[msg.sender].balanceOf[_address2bytes32(token)] -
+            amount;
+
+        // load pool
+        poolStateStruct storage $ = poolState[poolId];
+
+        // update protocol balance
+        if (token == $.tokenX) {
+            $.protocolX = $.protocolX + amount;
+        } else {
+            $.protocolY = $.protocolY + amount;
+        }
+    }
+
+    // Harvest
+    function harvest(bytes32 poolId) external onlyOwner onlyValidPool(poolId) {
+        // TBD
+    }
 }

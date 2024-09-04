@@ -159,8 +159,10 @@ contract FugaziOrderFacet is FugaziStorageLayout {
         // if this is the first order of epoch from trader then add the unclaimed order
         _addUnclaimedOrder(msg.sender, poolId, $.epoch);
 
-        // return the epoch of the order received
+        // emit event
         emit orderSubmitted(poolId, $.epoch);
+
+        // return the epoch of the order received
         return $.epoch;
     }
 

@@ -78,6 +78,7 @@ contract FugaziPoolActionFacet is FugaziStorageLayout {
         // increment the epoch
         $.epoch += 1;
         $.lastSettlement = uint32(block.timestamp);
+
         emit batchSettled(poolId, $.epoch - 1);
     }
 
@@ -167,6 +168,9 @@ contract FugaziPoolActionFacet is FugaziStorageLayout {
         account[trader].balanceOf[poolId] =
             account[trader].balanceOf[poolId] +
             claimableLP;
+
+        // emit event
+        emit orderClaimed(poolId, epoch, trader);
 
         return (claimableX, claimableY, claimableLP);
     }
