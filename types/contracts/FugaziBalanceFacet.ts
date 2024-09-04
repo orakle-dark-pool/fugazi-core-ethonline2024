@@ -29,7 +29,12 @@ export type InEuint32StructOutput = [data: string] & { data: string };
 
 export interface FugaziBalanceFacetInterface extends Interface {
   getFunction(
-    nameOrSignature: "deposit" | "eip712Domain" | "withdraw"
+    nameOrSignature:
+      | "deposit"
+      | "donateToProtocol"
+      | "eip712Domain"
+      | "harvest"
+      | "withdraw"
   ): FunctionFragment;
 
   getEvent(
@@ -49,9 +54,14 @@ export interface FugaziBalanceFacetInterface extends Interface {
     values: [AddressLike, AddressLike, InEuint32Struct]
   ): string;
   encodeFunctionData(
+    functionFragment: "donateToProtocol",
+    values: [BytesLike, InEuint32Struct]
+  ): string;
+  encodeFunctionData(
     functionFragment: "eip712Domain",
     values?: undefined
   ): string;
+  encodeFunctionData(functionFragment: "harvest", values: [BytesLike]): string;
   encodeFunctionData(
     functionFragment: "withdraw",
     values: [AddressLike, AddressLike, InEuint32Struct]
@@ -59,9 +69,14 @@ export interface FugaziBalanceFacetInterface extends Interface {
 
   decodeFunctionResult(functionFragment: "deposit", data: BytesLike): Result;
   decodeFunctionResult(
+    functionFragment: "donateToProtocol",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "eip712Domain",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "harvest", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "withdraw", data: BytesLike): Result;
 }
 
@@ -225,6 +240,12 @@ export interface FugaziBalanceFacet extends BaseContract {
     "nonpayable"
   >;
 
+  donateToProtocol: TypedContractMethod<
+    [poolId: BytesLike, _amount: InEuint32Struct],
+    [void],
+    "nonpayable"
+  >;
+
   eip712Domain: TypedContractMethod<
     [],
     [
@@ -241,6 +262,8 @@ export interface FugaziBalanceFacet extends BaseContract {
     "view"
   >;
 
+  harvest: TypedContractMethod<[poolId: BytesLike], [void], "nonpayable">;
+
   withdraw: TypedContractMethod<
     [recipient: AddressLike, token: AddressLike, _amount: InEuint32Struct],
     [void],
@@ -255,6 +278,13 @@ export interface FugaziBalanceFacet extends BaseContract {
     nameOrSignature: "deposit"
   ): TypedContractMethod<
     [recipient: AddressLike, token: AddressLike, _amount: InEuint32Struct],
+    [void],
+    "nonpayable"
+  >;
+  getFunction(
+    nameOrSignature: "donateToProtocol"
+  ): TypedContractMethod<
+    [poolId: BytesLike, _amount: InEuint32Struct],
     [void],
     "nonpayable"
   >;
@@ -275,6 +305,9 @@ export interface FugaziBalanceFacet extends BaseContract {
     ],
     "view"
   >;
+  getFunction(
+    nameOrSignature: "harvest"
+  ): TypedContractMethod<[poolId: BytesLike], [void], "nonpayable">;
   getFunction(
     nameOrSignature: "withdraw"
   ): TypedContractMethod<

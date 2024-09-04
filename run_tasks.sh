@@ -37,3 +37,9 @@ npx hardhat task:createPool --name0 FakeFGZ --amount0 7000 --name1 FakeUSD --amo
 npx hardhat task:getPoolInfo --name0 FakeFGZ --name1 FakeUSD $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" ) \
 && npx hardhat task:getPoolInfo --name0 FakeUSD --name1 FakeEUR $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" ) \
 && npx hardhat task:getPoolInfo --name0 FakeFGZ --name1 FakeEUR $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" )
+
+# removeLiquidity
+
+# addLiquidity
+
+# swap

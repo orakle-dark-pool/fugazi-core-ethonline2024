@@ -72,6 +72,7 @@ contract FugaziStorageLayout is Permissioned {
     // errors
     error InvalidTokenOrder();
     error PoolAlreadyExists();
+    error TooEarlyHarvest();
 
     // events
     event PoolCreated(address tokenX, address tokenY, bytes32 poolId);
@@ -92,6 +93,7 @@ contract FugaziStorageLayout is Permissioned {
         address tokenY;
         uint32 epoch;
         uint32 lastSettlement;
+        uint32 lastHarvest;
         // protocol account
         euint32 protocolX;
         euint32 protocolY;
@@ -107,6 +109,7 @@ contract FugaziStorageLayout is Permissioned {
     // storage variables
     mapping(address => mapping(address => bytes32)) internal poolIdMapping;
     mapping(bytes32 => poolStateStruct) internal poolState;
+    uint32 internal constant harvestInterval = 7 days;
     uint32 internal constant epochTime = 30 seconds;
     uint32 internal constant feeBitShifts = 10; // 1/1024 ~ 0.1%
 

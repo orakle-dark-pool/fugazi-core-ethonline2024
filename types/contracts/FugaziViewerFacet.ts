@@ -30,6 +30,37 @@ export type PermissionStructOutput = [publicKey: string, signature: string] & {
   signature: string;
 };
 
+export declare namespace FugaziStorageLayout {
+  export type UnclaimedOrderStructStruct = {
+    poolId: BytesLike;
+    epoch: BigNumberish;
+  };
+
+  export type UnclaimedOrderStructStructOutput = [
+    poolId: string,
+    epoch: bigint
+  ] & { poolId: string; epoch: bigint };
+
+  export type UnclaimedOrderForViewerStructStruct = {
+    poolId: BytesLike;
+    orderEpoch: BigNumberish;
+    poolEpoch: BigNumberish;
+    lastSettlement: BigNumberish;
+  };
+
+  export type UnclaimedOrderForViewerStructStructOutput = [
+    poolId: string,
+    orderEpoch: bigint,
+    poolEpoch: bigint,
+    lastSettlement: bigint
+  ] & {
+    poolId: string;
+    orderEpoch: bigint;
+    poolEpoch: bigint;
+    lastSettlement: bigint;
+  };
+}
+
 export interface FugaziViewerFacetInterface extends Interface {
   getFunction(
     nameOrSignature:
@@ -38,6 +69,11 @@ export interface FugaziViewerFacetInterface extends Interface {
       | "getLPBalance"
       | "getPoolId"
       | "getPoolInfo"
+      | "getUnclaimedOrder"
+      | "getUnclaimedOrders"
+      | "getUnclaimedOrdersLength"
+      | "getUnclaimedProtocolOrder"
+      | "getUnclaimedProtocolOrdersLength"
   ): FunctionFragment;
 
   getEvent(
@@ -72,6 +108,26 @@ export interface FugaziViewerFacetInterface extends Interface {
     functionFragment: "getPoolInfo",
     values: [BytesLike]
   ): string;
+  encodeFunctionData(
+    functionFragment: "getUnclaimedOrder",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getUnclaimedOrders",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getUnclaimedOrdersLength",
+    values?: undefined
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getUnclaimedProtocolOrder",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getUnclaimedProtocolOrdersLength",
+    values?: undefined
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "eip712Domain",
@@ -85,6 +141,26 @@ export interface FugaziViewerFacetInterface extends Interface {
   decodeFunctionResult(functionFragment: "getPoolId", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getPoolInfo",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getUnclaimedOrder",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getUnclaimedOrders",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getUnclaimedOrdersLength",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getUnclaimedProtocolOrder",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "getUnclaimedProtocolOrdersLength",
     data: BytesLike
   ): Result;
 }
@@ -283,6 +359,28 @@ export interface FugaziViewerFacet extends BaseContract {
     "view"
   >;
 
+  getUnclaimedOrder: TypedContractMethod<
+    [index: BigNumberish],
+    [FugaziStorageLayout.UnclaimedOrderStructStructOutput],
+    "view"
+  >;
+
+  getUnclaimedOrders: TypedContractMethod<
+    [],
+    [FugaziStorageLayout.UnclaimedOrderForViewerStructStructOutput[]],
+    "view"
+  >;
+
+  getUnclaimedOrdersLength: TypedContractMethod<[], [bigint], "view">;
+
+  getUnclaimedProtocolOrder: TypedContractMethod<
+    [index: BigNumberish],
+    [FugaziStorageLayout.UnclaimedOrderStructStructOutput],
+    "view"
+  >;
+
+  getUnclaimedProtocolOrdersLength: TypedContractMethod<[], [bigint], "view">;
+
   getFunction<T extends ContractMethod = ContractMethod>(
     key: string | FunctionFragment
   ): T;
@@ -328,6 +426,33 @@ export interface FugaziViewerFacet extends BaseContract {
   getFunction(
     nameOrSignature: "getPoolInfo"
   ): TypedContractMethod<[poolId: BytesLike], [[bigint, bigint]], "view">;
+  getFunction(
+    nameOrSignature: "getUnclaimedOrder"
+  ): TypedContractMethod<
+    [index: BigNumberish],
+    [FugaziStorageLayout.UnclaimedOrderStructStructOutput],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "getUnclaimedOrders"
+  ): TypedContractMethod<
+    [],
+    [FugaziStorageLayout.UnclaimedOrderForViewerStructStructOutput[]],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "getUnclaimedOrdersLength"
+  ): TypedContractMethod<[], [bigint], "view">;
+  getFunction(
+    nameOrSignature: "getUnclaimedProtocolOrder"
+  ): TypedContractMethod<
+    [index: BigNumberish],
+    [FugaziStorageLayout.UnclaimedOrderStructStructOutput],
+    "view"
+  >;
+  getFunction(
+    nameOrSignature: "getUnclaimedProtocolOrdersLength"
+  ): TypedContractMethod<[], [bigint], "view">;
 
   getEvent(
     key: "Deposit"

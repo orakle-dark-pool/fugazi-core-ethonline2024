@@ -1,4 +1,8 @@
-import { FugaziPoolRegistryFacet, FugaziViewerFacet } from "../types";
+import {
+  FugaziBalanceFacet,
+  FugaziPoolRegistryFacet,
+  FugaziViewerFacet,
+} from "../types";
 import { task } from "hardhat/config";
 import type { TaskArguments } from "hardhat/types";
 import chalk from "chalk";
@@ -13,9 +17,11 @@ task("task:createPool")
     const [signer] = await ethers.getSigners();
 
     // input arguments
-    const amount0 = Number(taskArguments.amount0);
+    const amount0 = Math.floor((taskArguments.amount0 * 9) / 10);
+    const donateAmount0 = Number(taskArguments.amount0) - amount0;
     const token0Name = taskArguments.name0;
-    const amount1 = Number(taskArguments.amount1);
+    const amount1 = Math.floor((taskArguments.amount1 * 9) / 10);
+    const donateAmount1 = Number(taskArguments.amount1) - amount1;
     const token1Name = taskArguments.name1;
 
     // deployments
@@ -27,6 +33,9 @@ task("task:createPool")
     );
     const FugaziViewerFacetDeployment = await deployments.get(
       "FugaziViewerFacet"
+    );
+    const FugaziBalanceFacetDeployment = await deployments.get(
+      "FugaziBalanceFacet"
     );
 
     // load FugaziCore contracts with abis of the facets
@@ -40,6 +49,11 @@ task("task:createPool")
       FugaziViewerFacetDeployment.abi,
       signer
     ) as unknown as FugaziViewerFacet;
+    const FugaziBalanceFacet = new ethers.Contract(
+      FugaziCoreDeployment.address,
+      FugaziBalanceFacetDeployment.abi,
+      signer
+    ) as unknown as FugaziBalanceFacet;
 
     // console.log
     console.log("*".repeat(50));
@@ -146,16 +160,41 @@ task("task:createPool")
     //                    After Pool Creation                    //
     ///////////////////////////////////////////////////////////////
 
-    // get pool id after creation
+    // get pool id after creation & donate to the pool to bootstrap the protocol owned account
     console.log("Getting pool id after creation... ");
     try {
+      // get pool id
       const poolId = await FugaziViewerFacet.getPoolId(
         token0Address,
         token1Address
       );
-      console.log(`Pool Id for ${token0Name} and ${token1Name}:`, poolId);
+
+      // construct donate input
+      let donateAmountX, donateAmountY;
+      if (token0Address < token1Address) {
+        donateAmountX = donateAmount0;
+        donateAmountY = donateAmount1;
+      } else {
+        donateAmountX = donateAmount1;
+        donateAmountY = donateAmount0;
+      }
+      const donateInputNumber = (donateAmountX << 15) + donateAmountY;
+      const encryptedDonateInputNumber = await fhenixjs.encrypt_uint32(
+        donateInputNumber
+      );
+
+      // donate to the pool
+      console.log("Donating to the pool... ");
+      const tx = await FugaziBalanceFacet.donateToProtocol(
+        poolId,
+        encryptedDonateInputNumber
+      );
+      console.log(
+        `Donated to the pool for ${token0Name} and ${token1Name}. tx hash:`,
+        tx.hash
+      );
     } catch (e) {
-      console.log("Failed to load poolId", e);
+      console.log("Failed to donate to the pool", e);
     }
 
     // get token balances after creation
@@ -169,7 +208,7 @@ task("task:createPool")
       encryptedBalance0After
     );
     console.log(
-      `Got decrypted balance of ${token0Name} in Fugazi after withdraw:`,
+      `Got decrypted balance of ${token0Name} in Fugazi after creation:`,
       decryptedBalance0After.toString()
     );
     const encryptedBalance1After = await FugaziViewerFacet.getBalance(
@@ -181,7 +220,7 @@ task("task:createPool")
       encryptedBalance1After
     );
     console.log(
-      `Got decrypted balance of ${token1Name} in Fugazi after withdraw:`,
+      `Got decrypted balance of ${token1Name} in Fugazi after creation:`,
       decryptedBalance1After.toString()
     );
 
@@ -197,7 +236,7 @@ task("task:createPool")
       encryptedLPBalance
     );
     console.log(
-      `Got decrypted LP balance of LP token in Fugazi after withdraw:`,
+      `Got decrypted LP balance of LP token in Fugazi after creation:`,
       decryptedLPBalance.toString()
     );
   });

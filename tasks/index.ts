@@ -17,6 +17,12 @@ import "./FugaziWithdraw";
 import "./FugaziCreatePool";
 import "./FugaziGetPoolInfo";
 
+// FugaziOrderFacet
+import "./FugaziRemoveLiquidity";
+import "./FugaziAddLiquidity";
+import "./FugaziSwap";
+
 // FugaziPoolActionFacet
+import "./FugaziSettleAndClaim";
 
 export default {};

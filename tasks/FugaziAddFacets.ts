@@ -40,6 +40,8 @@ task("task:addFacets").setAction(async function (
       selectors: [
         "a6462d0a", // deposit
         "e94af36e", // withdraw
+        "441cc944", // donateToProtocol
+        "4960b29d", // harvest
       ],
     },
     {
@@ -49,6 +51,11 @@ task("task:addFacets").setAction(async function (
         "a0ebf057", // getLPBalance
         "2ef61c21", // getPoolId
         "09f2c019", // getPoolInfo
+        "c7c13129", // getUnclaimedOrdersLength
+        "6697d691", // getUnclaimedOrder
+        "c0df2df2", // getUnclaimedOrders
+        "7e1d91d4", // getUnclaimedProtocolOrdersLength
+        "305d8812", // getUnclaimedProtocolOrder
       ],
     },
     {

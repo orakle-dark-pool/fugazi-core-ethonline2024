@@ -58,30 +58,59 @@ contract FugaziBalanceFacet is FugaziStorageLayout {
     // donateToProtocol
     function donateToProtocol(
         bytes32 poolId,
-        address token,
         inEuint32 calldata _amount
     ) external onlyValidPool(poolId) {
-        // transform type
-        euint32 amount = FHE.asEuint32(_amount);
-
-        // deduct user balance
-        account[msg.sender].balanceOf[_address2bytes32(token)] =
-            account[msg.sender].balanceOf[_address2bytes32(token)] -
-            amount;
-
         // load pool
         poolStateStruct storage $ = poolState[poolId];
 
+        // transform type
+        euint32 amount = FHE.asEuint32(_amount);
+        euint32 availableX = FHE.min(
+            account[msg.sender].balanceOf[_address2bytes32($.tokenX)],
+            FHE.shr(
+                FHE.and(amount, FHE.asEuint32(1073709056)),
+                FHE.asEuint32(15)
+            ) // and(initialReserves, (2^30 - 1) - (2^15 - 1)) >> 15
+        );
+        euint32 availableY = FHE.min(
+            account[msg.sender].balanceOf[_address2bytes32($.tokenY)],
+            FHE.and(amount, FHE.asEuint32(32767)) // smallest 15 bits (32767 = 2 ** 15 - 1)
+        );
+
+        // deduct user balance
+        account[msg.sender].balanceOf[_address2bytes32($.tokenX)] =
+            account[msg.sender].balanceOf[_address2bytes32($.tokenX)] -
+            availableX;
+        account[msg.sender].balanceOf[_address2bytes32($.tokenY)] =
+            account[msg.sender].balanceOf[_address2bytes32($.tokenY)] -
+            availableY;
+
         // update protocol balance
-        if (token == $.tokenX) {
-            $.protocolX = $.protocolX + amount;
-        } else {
-            $.protocolY = $.protocolY + amount;
-        }
+        $.protocolX = $.protocolX + availableX;
+        $.protocolY = $.protocolY + availableY;
     }
 
     // Harvest
     function harvest(bytes32 poolId) external onlyOwner onlyValidPool(poolId) {
-        // TBD
+        // owner (or dao-owned account) can harvest protocol owned tokens
+        poolStateStruct storage $ = poolState[poolId];
+        if (block.timestamp < $.lastHarvest + harvestInterval)
+            revert TooEarlyHarvest();
+
+        // reward will be 1/16 current protocol balance
+        euint32 rewardX = FHE.shr($.protocolX, FHE.asEuint32(4));
+        euint32 rewardY = FHE.shr($.protocolY, FHE.asEuint32(4));
+
+        // deduct protocol balance
+        $.protocolX = $.protocolX - rewardX;
+        $.protocolY = $.protocolY - rewardY;
+
+        // add the reward to caller(i.e., owner)'s balance
+        account[msg.sender].balanceOf[_address2bytes32($.tokenX)] =
+            account[msg.sender].balanceOf[_address2bytes32($.tokenX)] +
+            rewardX;
+        account[msg.sender].balanceOf[_address2bytes32($.tokenY)] =
+            account[msg.sender].balanceOf[_address2bytes32($.tokenY)] +
+            rewardY;
     }
 }
