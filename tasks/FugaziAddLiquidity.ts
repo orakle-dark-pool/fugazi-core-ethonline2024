@@ -6,7 +6,6 @@ import {
 import { task } from "hardhat/config";
 import type { TaskArguments } from "hardhat/types";
 import chalk from "chalk";
-import { FhenixClient } from "fhenixjs";
 
 task("task:addLiquidity")
   .addParam("name0", "Name of the token to provide liquidity", "FakeFGZ")
