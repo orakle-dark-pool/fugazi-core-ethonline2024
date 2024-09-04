@@ -1,10 +1,11 @@
 #!/bin/bash
 
 # Set this to true if you want to use --network testnet, otherwise leave it empty
-USE_TESTNET="false"
+USE_TESTNET="true"
 
 # setting for localfhenix
 rm -rf deployments/localfhenix \
+&& rm -rf deployments/testnet \
 && npx hardhat compile \
 && npx hardhat localfhenix:start 
 
@@ -39,7 +40,13 @@ npx hardhat task:getPoolInfo --name0 FakeFGZ --name1 FakeUSD $( [[ "$USE_TESTNET
 && npx hardhat task:getPoolInfo --name0 FakeFGZ --name1 FakeEUR $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" )
 
 # removeLiquidity
+npx hardhat task:removeLiquidity --name0 FakeFGZ --name1 FakeUSD --amount 100 $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" ) \
+&& npx hardhat task:removeLiquidity --name0 FakeUSD --name1 FakeEUR --amount 100 $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" ) \
+&& npx hardhat task:removeLiquidity --name0 FakeFGZ --name1 FakeEUR --amount 100 $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" )
 
 # addLiquidity
+npx hardhat task:addLiquidity --name0 FakeFGZ --name1 FakeUSD --amount0 100 --amount1 100 $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" ) \
+&& npx hardhat task:addLiquidity --name0 FakeUSD --name1 FakeEUR --amount0 111 --amount1 100 $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" ) \
+&& npx hardhat task:addLiquidity --name0 FakeFGZ --name1 FakeEUR --amount0 111 --amount1 100 $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" )
 
 # swap

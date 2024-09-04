@@ -97,7 +97,7 @@ task("task:createPool")
       encryptedBalance0Before
     );
     console.log(
-      `Got decrypted balance of ${token0Name} in Fugazi before withdraw:`,
+      `Got decrypted balance of ${token0Name} in Fugazi before creation:`,
       decryptedBalance0Before.toString()
     );
     const encryptedBalance1Before = await FugaziViewerFacet.getBalance(
@@ -109,7 +109,7 @@ task("task:createPool")
       encryptedBalance1Before
     );
     console.log(
-      `Got decrypted balance of ${token1Name} in Fugazi before withdraw:`,
+      `Got decrypted balance of ${token1Name} in Fugazi before creation:`,
       decryptedBalance1Before.toString()
     );
 
