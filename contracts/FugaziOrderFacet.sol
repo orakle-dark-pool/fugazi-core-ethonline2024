@@ -202,7 +202,7 @@ contract FugaziOrderFacet is FugaziStorageLayout {
                 unpackedOrder.amountX,
                 FHE.asEuint32(0)
             ) * unpackedOrder.noiseAmplitude,
-            FHE.asEuint32(11)
+            FHE.asEuint32(10)
         );
         noiseY = FHE.shr(
             FHE.select(
@@ -210,7 +210,7 @@ contract FugaziOrderFacet is FugaziStorageLayout {
                 FHE.asEuint32(0),
                 unpackedOrder.amountY
             ) * unpackedOrder.noiseAmplitude,
-            FHE.asEuint32(11)
+            FHE.asEuint32(10)
         );
         noiseX = noiseX + (noiseY * $.reserveX) / $.reserveY;
         noiseY = noiseY + (noiseX * $.reserveY) / $.reserveX;
@@ -224,13 +224,13 @@ contract FugaziOrderFacet is FugaziStorageLayout {
     ) internal view returns (euint32, euint32) {
         euint32 feeX = FHE.select(
             unpackedOrder.isNoiseReferenceX,
-            (noiseX * noiseY) / $.reserveY + FHE.asEuint32(1), // round up
+            ((noiseX * noiseY) / $.reserveY) + FHE.asEuint32(1), // round up
             FHE.asEuint32(0)
         );
         euint32 feeY = FHE.select(
             unpackedOrder.isNoiseReferenceX,
             FHE.asEuint32(0),
-            (noiseX * noiseY) / $.reserveX + FHE.asEuint32(1) // round up
+            ((noiseX * noiseY) / $.reserveX) + FHE.asEuint32(1) // round up
         );
 
         return (feeX, feeY);

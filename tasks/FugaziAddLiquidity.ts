@@ -1,4 +1,8 @@
-import { FugaziOrderFacet, FugaziViewerFacet } from "../types";
+import {
+  FugaziOrderFacet,
+  FugaziPoolActionFacet,
+  FugaziViewerFacet,
+} from "../types";
 import { task } from "hardhat/config";
 import type { TaskArguments } from "hardhat/types";
 import chalk from "chalk";
@@ -33,6 +37,9 @@ task("task:addLiquidity")
     const FugaziOrderFacetDeployment = await deployments.get(
       "FugaziOrderFacet"
     );
+    const FugaziPoolActionFacetDeployment = await deployments.get(
+      "FugaziPoolActionFacet"
+    );
     const FugaziViewerFacetDeployment = await deployments.get(
       "FugaziViewerFacet"
     );
@@ -43,6 +50,11 @@ task("task:addLiquidity")
       FugaziOrderFacetDeployment.abi,
       signer
     ) as unknown as FugaziOrderFacet;
+    const FugaziPoolActionFacet = new ethers.Contract(
+      FugaziCoreDeployment.address,
+      FugaziPoolActionFacetDeployment.abi,
+      signer
+    ) as unknown as FugaziPoolActionFacet;
     const FugaziViewerFacet = new ethers.Contract(
       FugaziCoreDeployment.address,
       FugaziViewerFacetDeployment.abi,
@@ -98,6 +110,22 @@ task("task:addLiquidity")
       decryptedBalance1Before
     );
 
+    // getLPBalance before adding liquidity
+    console.log("Getting LP token balance before adding liquidity... ");
+    const encryptedLPBalanceBefore = await FugaziViewerFacet.getLPBalance(
+      token0Address,
+      token1Address,
+      permitForFugazi
+    );
+    const decryptedLPBalanceBefore = fhenixjs.unseal(
+      FugaziCoreDeployment.address,
+      encryptedLPBalanceBefore
+    );
+    console.log(
+      `LP balance of LP token in Fugazi before adding liquidity:`,
+      decryptedLPBalanceBefore
+    );
+
     ///////////////////////////////////////////////////////////////
     //                       addLiquidity                        //
     ///////////////////////////////////////////////////////////////
@@ -108,7 +136,9 @@ task("task:addLiquidity")
       token0Address < token1Address
         ? (amount0 << 15) + amount1 + 1073741824
         : (amount1 << 15) + amount0 + 1073741824;
-    const newInputAmount = payPrivacyFeeIn0
+    const payPrivacyFeeInX =
+      token0Address < token1Address ? payPrivacyFeeIn0 : ~payPrivacyFeeIn0;
+    const newInputAmount = payPrivacyFeeInX
       ? inputAmount + (noiseAmplitude << 32)
       : inputAmount + 2147483648 + (noiseAmplitude << 32);
     const encryptedInput = await fhenixjs.encrypt_uint64(
@@ -129,13 +159,52 @@ task("task:addLiquidity")
       console.error(error);
     }
 
-    ///////////////////////////////////////////////////////////////
-    //                   Before addLiquidity                     //
-    ///////////////////////////////////////////////////////////////
-
     // wait for 1 minute
     console.log("Waiting for 1 minute... ");
     await new Promise((r) => setTimeout(r, 60000));
+
+    // check the last unclaimedOrder
+    console.log("Checking unclaimed order... ");
+    const unlaimedOrdersLength = Number(
+      await FugaziViewerFacet.getUnclaimedOrdersLength()
+    );
+    const unclaimedOrder = await FugaziViewerFacet.getUnclaimedOrder(
+      unlaimedOrdersLength - 1
+    );
+    console.log("Unclaimed order:", unclaimedOrder);
+
+    ///////////////////////////////////////////////////////////////
+    //                       settleBatch                         //
+    ///////////////////////////////////////////////////////////////
+
+    console.log("Settling batch... "); // settle batch
+    try {
+      const tx = await FugaziPoolActionFacet.settleBatch(poolId);
+      console.log("Settled batch:", tx.hash);
+    } catch (e) {
+      console.log("Failed to settle batch", e);
+    }
+    await new Promise((resolve) => setTimeout(resolve, 60 * 1000));
+
+    ///////////////////////////////////////////////////////////////
+    //                          claim                            //
+    ///////////////////////////////////////////////////////////////
+
+    console.log("Claiming... ");
+    try {
+      const tx = await FugaziPoolActionFacet.claim(
+        unclaimedOrder[0],
+        unclaimedOrder[1]
+      );
+      console.log("Claimed:", tx.hash);
+    } catch (e) {
+      console.log("Failed to claim", e);
+    }
+    await new Promise((resolve) => setTimeout(resolve, 60 * 1000));
+
+    ///////////////////////////////////////////////////////////////
+    //                    after addLiquidity                     //
+    ///////////////////////////////////////////////////////////////
 
     // check balances
     console.log("Checking balances after adding liquidity...");
@@ -164,13 +233,19 @@ task("task:addLiquidity")
       decryptedBalance1After
     );
 
-    // check the last unclaimedOrder
-    console.log("Checking unclaimed order... ");
-    const unlaimedOrdersLength = Number(
-      await FugaziViewerFacet.getUnclaimedOrdersLength()
+    // check LP token balance
+    console.log("Getting LP token balance after adding liquidity... ");
+    const encryptedLPBalance = await FugaziViewerFacet.getLPBalance(
+      token0Address,
+      token1Address,
+      permitForFugazi
     );
-    const unclaimedOrder = await FugaziViewerFacet.getUnclaimedOrder(
-      unlaimedOrdersLength - 1
+    const decryptedLPBalance = fhenixjs.unseal(
+      FugaziCoreDeployment.address,
+      encryptedLPBalance
     );
-    console.log("Unclaimed order:", unclaimedOrder);
+    console.log(
+      `LP balance of LP token in Fugazi after adding liquidity:`,
+      decryptedLPBalance
+    );
   });
