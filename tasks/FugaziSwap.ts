@@ -8,8 +8,8 @@ import type { TaskArguments } from "hardhat/types";
 import chalk from "chalk";
 
 task("task:swap")
-  .addParam("namein", "Name of the token to sell", "FakeUSD")
-  .addParam("amountin", "Amount of token to sell (plaintext number)", "256")
+  .addParam("namein", "Name of the token to sell", "FakeEUR")
+  .addParam("amountin", "Amount of token to sell", "100")
   .addParam("nameout", "Name of the token to buy", "FakeFGZ")
   .addParam("noiseamplitude", "Noise amplitude", "1024")
   .setAction(async function (taskArguments: TaskArguments, hre) {
@@ -63,7 +63,7 @@ task("task:swap")
         `Running swap: swapping ${amountin} ${taskArguments.namein} for ${taskArguments.nameout}.`
       )
     );
-    console.log(chalk.yellow(`Noise Level: ${(noiseAmplitude * 100) / 2048}%`));
+    console.log(chalk.yellow(`Noise Level: ${(noiseAmplitude * 100) / 1024}%`));
 
     ///////////////////////////////////////////////////////////////
     //                       Before swap                         //

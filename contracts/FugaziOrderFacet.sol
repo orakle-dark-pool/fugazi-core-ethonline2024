@@ -117,15 +117,19 @@ contract FugaziOrderFacet is FugaziStorageLayout {
         );
 
         // take swap fee
-        unpackedOrder = _chargeSwapFee($, batch, unpackedOrder);
+        unpackedOrderStruct memory newUnpackedOrder = _chargeSwapFee(
+            $,
+            batch,
+            unpackedOrder
+        );
 
         // deduct the balance from user account
         account[msg.sender].balanceOf[_address2bytes32($.tokenX)] =
             account[msg.sender].balanceOf[_address2bytes32($.tokenX)] -
-            unpackedOrder.amountX;
+            newUnpackedOrder.amountX;
         account[msg.sender].balanceOf[_address2bytes32($.tokenY)] =
             account[msg.sender].balanceOf[_address2bytes32($.tokenY)] -
-            unpackedOrder.amountY;
+            newUnpackedOrder.amountY;
 
         // update the trader's order in the batch
         batch.order[msg.sender].swapX = FHE.select(
@@ -358,18 +362,8 @@ contract FugaziOrderFacet is FugaziStorageLayout {
             unpackedOrder.amountY,
             FHE.asEuint32(feeBitShifts)
         );
-        feeX = FHE.select(
-            FHE.gt(feeX, FHE.asEuint32(0)),
-            feeX + FHE.asEuint32(1),
-            FHE.asEuint32(0)
-        ); // round up if non-zero
-        feeY = FHE.select(
-            FHE.gt(feeY, FHE.asEuint32(0)),
-            feeY + FHE.asEuint32(1),
-            FHE.asEuint32(0)
-        ); // round up if non-zero
 
-        // no need the check the feasibility of fee deduction
+        // no need to check the feasibility of fee deduction
 
         // deduct the fee from user balance...
         account[msg.sender].balanceOf[_address2bytes32($.tokenX)] =

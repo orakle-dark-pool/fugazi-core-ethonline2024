@@ -9,11 +9,11 @@ import chalk from "chalk";
 
 task("task:addLiquidity")
   .addParam("name0", "Name of the token to provide liquidity", "FakeFGZ")
-  .addParam("name1", "Name of the token to provide liquidity", "FakeUSD")
+  .addParam("name1", "Name of the token to provide liquidity", "FakeEUR")
   .addParam("amount0", "Amount of token0 to provide", "100")
   .addParam("amount1", "Amount of token1 to provide", "100")
   .addParam("payprivacyfeein0", "Pay privacy fee in token0", "true")
-  .addParam("noiseamplitude", "Noise amplitude", "1024")
+  .addParam("noiseamplitude", "Noise amplitude", "2047")
   .setAction(async function (taskArguments: TaskArguments, hre) {
     const { fhenixjs, ethers, deployments } = hre;
     const [signer] = await ethers.getSigners();
