@@ -7,6 +7,10 @@ import "./FugaziStorageLayout.sol";
 /// Anyone can make protocol-owned account's unclaimed orders to be claimed
 /// and get small portion of it as reward
 contract FugaziPoolActionFacet is FugaziStorageLayout {
+    function toggleNoiseOrder(bool on) external onlyOwner {
+        activateNoiseOrder = on;
+    }
+
     function settleBatch(bytes32 poolId) external onlyValidPool(poolId) {
         // load the pool
         poolStateStruct storage $ = poolState[poolId];
@@ -18,7 +22,7 @@ contract FugaziPoolActionFacet is FugaziStorageLayout {
 
         // read reserves and set them as initial values of the batch
         // taken fee is added to initial reserves
-        // to prevent JIT liquidity provision earns fee
+        // to prevent JIT liquidity provision to earn fee
         batch.reserveX0 = $.reserveX + batch.feeX;
         batch.reserveY0 = $.reserveY + batch.feeY;
 
@@ -71,9 +75,7 @@ contract FugaziPoolActionFacet is FugaziStorageLayout {
         See https://github.com/kosunghun317/alternative_AMMs/blob/master/notes/FMAMM_batch_math.ipynb for derivation.
         */
         $.lpTotalSupply = $.lpTotalSupply + batch.lpIncrement;
-        account[address(this)].balanceOf[poolId] =
-            account[address(this)].balanceOf[poolId] +
-            batch.lpIncrement;
+        _increaseUserBalance(address(this), poolId, batch.lpIncrement);
 
         // increment the epoch
         $.epoch += 1;
@@ -110,12 +112,8 @@ contract FugaziPoolActionFacet is FugaziStorageLayout {
         $.protocolY = $.protocolY - rewardY;
 
         // reward the caller
-        account[msg.sender].balanceOf[_address2bytes32($.tokenX)] =
-            account[msg.sender].balanceOf[_address2bytes32($.tokenX)] +
-            rewardX;
-        account[msg.sender].balanceOf[_address2bytes32($.tokenY)] =
-            account[msg.sender].balanceOf[_address2bytes32($.tokenY)] +
-            rewardY;
+        _increaseUserBalance(msg.sender, _address2bytes32($.tokenX), rewardX);
+        _increaseUserBalance(msg.sender, _address2bytes32($.tokenY), rewardY);
     }
 
     function _claim(
@@ -144,12 +142,16 @@ contract FugaziPoolActionFacet is FugaziStorageLayout {
             batch.XForPricing;
 
         if (trader != address(this)) {
-            account[trader].balanceOf[_address2bytes32($.tokenX)] =
-                account[trader].balanceOf[_address2bytes32($.tokenX)] +
-                claimableX;
-            account[trader].balanceOf[_address2bytes32($.tokenY)] =
-                account[trader].balanceOf[_address2bytes32($.tokenY)] +
-                claimableY;
+            _increaseUserBalance(
+                trader,
+                _address2bytes32($.tokenX),
+                claimableX
+            );
+            _increaseUserBalance(
+                trader,
+                _address2bytes32($.tokenY),
+                claimableY
+            );
         } else {
             $.protocolX = $.protocolX + claimableX;
             $.protocolY = $.protocolY + claimableY;
@@ -162,12 +164,8 @@ contract FugaziPoolActionFacet is FugaziStorageLayout {
         ); /*
             Again, this is underestimation. Correct formula will be used once the gas usage becomes affordable.
            */
-        account[address(this)].balanceOf[poolId] =
-            account[address(this)].balanceOf[poolId] -
-            claimableLP;
-        account[trader].balanceOf[poolId] =
-            account[trader].balanceOf[poolId] +
-            claimableLP;
+        _decreaseUserBalance(address(this), poolId, claimableLP);
+        _increaseUserBalance(trader, poolId, claimableLP);
 
         // emit event
         emit orderClaimed(poolId, epoch, trader);

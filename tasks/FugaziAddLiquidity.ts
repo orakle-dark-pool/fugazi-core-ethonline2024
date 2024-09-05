@@ -10,10 +10,10 @@ import chalk from "chalk";
 task("task:addLiquidity")
   .addParam("name0", "Name of the token to provide liquidity", "FakeFGZ")
   .addParam("name1", "Name of the token to provide liquidity", "FakeEUR")
-  .addParam("amount0", "Amount of token0 to provide", "100")
-  .addParam("amount1", "Amount of token1 to provide", "100")
-  .addParam("payprivacyfeein0", "Pay privacy fee in token0", "true")
-  .addParam("noiseamplitude", "Noise amplitude", "2047")
+  .addParam("amount0", "Amount of token0 to provide", "512")
+  .addParam("amount1", "Amount of token1 to provide", "512")
+  .addParam("payprivacyfeein0", "Pay privacy fee in token0", "0")
+  .addParam("noiseamplitude", "Noise amplitude", "512")
   .setAction(async function (taskArguments: TaskArguments, hre) {
     const { fhenixjs, ethers, deployments } = hre;
     const [signer] = await ethers.getSigners();
@@ -23,13 +23,10 @@ task("task:addLiquidity")
     const token1Name = taskArguments.name1;
     const token0Address = (await deployments.get(token0Name)).address;
     const token1Address = (await deployments.get(token1Name)).address;
-    const amount0 = Number(taskArguments.amount0);
-    const amount1 = Number(taskArguments.amount1);
-    const payPrivacyFeeIn0 = taskArguments.payPrivacyFeeIn0 === "true";
-    const noiseAmplitude = Math.min(
-      Number(taskArguments.noiseAmplitude),
-      Number(2047)
-    );
+    const amount0 = Number(taskArguments.amount0); // Amount for token0
+    const amount1 = Number(taskArguments.amount1); // Amount for token1
+    const payPrivacyFeeIn0 = Boolean(Number(taskArguments.payprivacyfeein0)); // Privacy fee flag
+    const noiseAmplitude = Math.min(Number(taskArguments.noiseamplitude), 2047); // Noise amplitude (max 2047)
 
     // deployments
     const FugaziCoreDeployment = await deployments.get("FugaziCore");
@@ -67,6 +64,16 @@ task("task:addLiquidity")
         `Running addLiquidity: adding ${amount0} ${token0Name} and ${amount1} ${token1Name} to pool`
       )
     );
+    console.log(chalk.yellow(`Noise Level: ${(noiseAmplitude * 100) / 1024}%`));
+
+    // enable noise
+    try {
+      console.log("Enabling noise... ");
+      const tx = await FugaziPoolActionFacet.toggleNoiseOrder(true);
+      console.log("Enabled noise:", tx.hash);
+    } catch (e) {
+      console.log("Failed to enable noise", e);
+    }
 
     ///////////////////////////////////////////////////////////////
     //                   Before addLiquidity                     //
@@ -128,32 +135,91 @@ task("task:addLiquidity")
     ///////////////////////////////////////////////////////////////
     //                       addLiquidity                        //
     ///////////////////////////////////////////////////////////////
+    async function packAndEncryptOrder(
+      amountX: number, // 15-bit number (amount for tokenX)
+      amountY: number, // 15-bit number (amount for tokenY)
+      noiseAmplitude: number, // 11-bit number (max 2047)
+      isNoiseReferenceX: boolean, // 1-bit flag (true for tokenX noise reference)
+      isSwap: boolean
+    ) {
+      // Validate the input values to ensure they fit in their respective bit sizes
+      if (amountX < 0 || amountX > 32767) {
+        throw new Error("amountX must be between 0 and 32767 (15 bits)");
+      }
+      if (amountY < 0 || amountY > 32767) {
+        throw new Error("amountY must be between 0 and 32767 (15 bits)");
+      }
+      if (noiseAmplitude < 0 || noiseAmplitude > 2047) {
+        throw new Error("noiseAmplitude must be between 0 and 2047 (11 bits)");
+      }
 
+      // Pack the values into a single BigInt
+      let packedAmount: bigint = BigInt(0);
+
+      // Pack amountY (15 bits)
+      packedAmount |= BigInt(amountY);
+
+      // Pack amountX (15 bits), shift it by 15
+      packedAmount |= BigInt(amountX) << BigInt(15);
+
+      // Pack isSwap (1 bit), shift by 30 (isSwap = true means 0 for swap, 1 for addLiquidity)
+      packedAmount |= BigInt(isSwap ? 0 : 1) << BigInt(30);
+
+      // Pack isNoiseReferenceX (1 bit), shift by 31
+      packedAmount |= BigInt(isNoiseReferenceX ? 1 : 0) << BigInt(31);
+
+      // Pack noiseAmplitude (11 bits), shift by 32
+      packedAmount |= BigInt(noiseAmplitude) << BigInt(32);
+
+      // print the final packed amount in binary
+      console.log("Packed amount in binary: ", packedAmount.toString(2));
+      // Encrypt the packed amount using fhenixjs.encrypt_euint64()
+      const encryptedPackedAmount = await fhenixjs.encrypt_uint64(packedAmount);
+
+      return encryptedPackedAmount;
+    }
     // construct input for liquidity provision
     console.log("Constructing input for liquidity provision... ");
-    const inputAmount =
-      token0Address < token1Address
-        ? (amount0 << 15) + amount1 + 1073741824
-        : (amount1 << 15) + amount0 + 1073741824;
-    const payPrivacyFeeInX =
-      token0Address < token1Address ? payPrivacyFeeIn0 : ~payPrivacyFeeIn0;
-    const newInputAmount = payPrivacyFeeInX
-      ? inputAmount + (noiseAmplitude << 32)
-      : inputAmount + 2147483648 + (noiseAmplitude << 32);
-    const encryptedInput = await fhenixjs.encrypt_uint64(
-      BigInt(newInputAmount)
-    );
     const poolId = await FugaziViewerFacet.getPoolId(
       token0Address,
       token1Address
+    );
+    const token0IsTokenX = token0Address < token1Address;
+    // Variables for the packed order amounts and flags
+    let amountX: number, amountY: number;
+    let isNoiseReferenceX: boolean;
+
+    // Assign amountX, amountY and isNoiseReferenceX based on token0IsTokenX
+    if (token0IsTokenX) {
+      amountX = amount0;
+      amountY = amount1;
+      isNoiseReferenceX = payPrivacyFeeIn0; // If paying privacy fee in token0, it's noise reference for tokenX
+    } else {
+      amountX = amount1;
+      amountY = amount0;
+      isNoiseReferenceX = !payPrivacyFeeIn0; // If paying privacy fee in token1, noise reference is for tokenY
+    }
+    // Pack the order and encrypt
+    const encryptedPackedOrder = await packAndEncryptOrder(
+      amountX,
+      amountY,
+      noiseAmplitude,
+      isNoiseReferenceX,
+      false
     );
 
     console.log(
       `Providing ${amount0} ${taskArguments.name0} and ${amount1} ${taskArguments.name1} to pool... `
     );
     try {
-      const tx = await FugaziOrderFacet.submitOrder(poolId, encryptedInput);
-      await tx.wait();
+      const tx = await FugaziOrderFacet.submitOrder(
+        poolId,
+        encryptedPackedOrder
+      );
+      console.log(
+        `Provided ${amount0} ${taskArguments.name0} and ${amount1} ${taskArguments.name1} to pool. tx hash:`,
+        tx.hash
+      );
     } catch (error) {
       console.error(error);
     }

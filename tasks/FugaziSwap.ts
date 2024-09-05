@@ -12,6 +12,7 @@ task("task:swap")
   .addParam("amountin", "Amount of token to sell", "100")
   .addParam("nameout", "Name of the token to buy", "FakeFGZ")
   .addParam("noiseamplitude", "Noise amplitude", "1024")
+  .addParam("enablenoise", "Enable noise", "1")
   .setAction(async function (taskArguments: TaskArguments, hre) {
     const { fhenixjs, ethers, deployments } = hre;
     const [signer] = await ethers.getSigners();
@@ -26,6 +27,7 @@ task("task:swap")
       Number(taskArguments.noiseamplitude),
       Number(2047)
     );
+    const enableNoise = Number(taskArguments.enablenoise);
 
     // deployments
     const FugaziCoreDeployment = await deployments.get("FugaziCore");
@@ -64,6 +66,25 @@ task("task:swap")
       )
     );
     console.log(chalk.yellow(`Noise Level: ${(noiseAmplitude * 100) / 1024}%`));
+
+    // enable noise
+    if (enableNoise < 1) {
+      try {
+        console.log("Enabling noise... ");
+        const tx = await FugaziPoolActionFacet.toggleNoiseOrder(true);
+        console.log("Enabled noise:", tx.hash);
+      } catch (e) {
+        console.log("Failed to enable noise", e);
+      }
+    } else {
+      try {
+        console.log("Disabling noise... ");
+        const tx = await FugaziPoolActionFacet.toggleNoiseOrder(false);
+        console.log("Disabled noise:", tx.hash);
+      } catch (e) {
+        console.log("Failed to disable noise", e);
+      }
+    }
 
     ///////////////////////////////////////////////////////////////
     //                       Before swap                         //
@@ -110,27 +131,29 @@ task("task:swap")
 
     // construct input for swap
     console.log("Constructing input for swap... ");
+    const inputAmount =
+      inputTokenAddress < outputTokenAddress // is inputToken == tokenX?
+        ? amountin << 15
+        : amountin;
+    const payPrivacyFeeInX =
+      inputTokenAddress < outputTokenAddress ? true : false;
+    const newInputAmount = payPrivacyFeeInX
+      ? (noiseAmplitude << 32) + inputAmount
+      : (noiseAmplitude << 32) + 2147483648 + inputAmount;
+    console.log("input amount in binary: ", newInputAmount.toString(2));
+    const encryptedInput = await fhenixjs.encrypt_uint64(
+      BigInt(newInputAmount)
+    );
     const poolId = await FugaziViewerFacet.getPoolId(
       inputTokenAddress,
       outputTokenAddress
     );
-    let inputAmount =
-      inputTokenAddress < outputTokenAddress // is inputToken == tokenX?
-        ? (2 << 30) * 0 + (amountin << 15)
-        : (2 << 30) * 0 + amountin;
-    const payPrivacyFeeInX =
-      inputTokenAddress < outputTokenAddress ? true : false;
-    inputAmount = payPrivacyFeeInX
-      ? inputAmount + (noiseAmplitude << 32)
-      : inputAmount + 2147483648 + (noiseAmplitude << 32);
-    const encryptedInput = await fhenixjs.encrypt_uint64(BigInt(inputAmount));
-
     console.log(
       `Swapping ${amountin} ${taskArguments.namein} for ${taskArguments.nameout}... `
     );
     try {
       const tx = await FugaziOrderFacet.submitOrder(poolId, encryptedInput);
-      await tx.wait();
+      console.log("Swapped:", tx.hash);
     } catch (error) {
       console.error(error);
     }

@@ -22,9 +22,7 @@ contract FugaziBalanceFacet is FugaziStorageLayout {
         );
 
         // update storage
-        account[msg.sender].balanceOf[_address2bytes32(token)] =
-            account[msg.sender].balanceOf[_address2bytes32(token)] +
-            spent;
+        _increaseUserBalance(recipient, _address2bytes32(token), spent);
 
         // emit event
         emit Deposit(recipient, token);
@@ -44,9 +42,7 @@ contract FugaziBalanceFacet is FugaziStorageLayout {
         ); // you cannot withdraw more than you have
 
         // update storage
-        account[msg.sender].balanceOf[_address2bytes32(token)] =
-            account[msg.sender].balanceOf[_address2bytes32(token)] -
-            amount;
+        _decreaseUserBalance(msg.sender, _address2bytes32(token), amount);
 
         // transfer
         IFHERC20(token).transferEncrypted(recipient, amount);
@@ -78,16 +74,23 @@ contract FugaziBalanceFacet is FugaziStorageLayout {
         );
 
         // deduct user balance
-        account[msg.sender].balanceOf[_address2bytes32($.tokenX)] =
-            account[msg.sender].balanceOf[_address2bytes32($.tokenX)] -
-            availableX;
-        account[msg.sender].balanceOf[_address2bytes32($.tokenY)] =
-            account[msg.sender].balanceOf[_address2bytes32($.tokenY)] -
-            availableY;
+        _decreaseUserBalance(
+            msg.sender,
+            _address2bytes32($.tokenX),
+            availableX
+        );
+        _decreaseUserBalance(
+            msg.sender,
+            _address2bytes32($.tokenY),
+            availableY
+        );
 
         // update protocol balance
         $.protocolX = $.protocolX + availableX;
         $.protocolY = $.protocolY + availableY;
+
+        // emit event
+        emit Donation(poolId);
     }
 
     // Harvest
@@ -106,11 +109,13 @@ contract FugaziBalanceFacet is FugaziStorageLayout {
         $.protocolY = $.protocolY - rewardY;
 
         // add the reward to caller(i.e., owner)'s balance
-        account[msg.sender].balanceOf[_address2bytes32($.tokenX)] =
-            account[msg.sender].balanceOf[_address2bytes32($.tokenX)] +
-            rewardX;
-        account[msg.sender].balanceOf[_address2bytes32($.tokenY)] =
-            account[msg.sender].balanceOf[_address2bytes32($.tokenY)] +
-            rewardY;
+        _increaseUserBalance(msg.sender, _address2bytes32($.tokenX), rewardX);
+        _increaseUserBalance(msg.sender, _address2bytes32($.tokenY), rewardY);
+
+        // update last harvest time
+        $.lastHarvest = uint32(block.timestamp);
+
+        // emit event
+        emit Harvest(poolId);
     }
 }

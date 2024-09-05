@@ -62,12 +62,8 @@ contract FugaziPoolRegistryFacet is FugaziStorageLayout {
         /*.•°:°.´+˚.*°.˚:*.´•*.+°.•°:´*.´•*.•°.•°:°.´:•˚°.*°.˚:*.´+°.•*/
 
         // deduct the token balances of caller
-        account[msg.sender].balanceOf[_address2bytes32(tokenX)] =
-            account[msg.sender].balanceOf[_address2bytes32(tokenX)] -
-            availableX;
-        account[msg.sender].balanceOf[_address2bytes32(tokenY)] =
-            account[msg.sender].balanceOf[_address2bytes32(tokenY)] -
-            availableY;
+        _decreaseUserBalance(msg.sender, _address2bytes32(tokenX), availableX);
+        _decreaseUserBalance(msg.sender, _address2bytes32(tokenY), availableY);
 
         // update pool id mapping - pool is created at this point
         poolIdMapping[tokenX][tokenY] = keccak256(
@@ -111,11 +107,16 @@ contract FugaziPoolRegistryFacet is FugaziStorageLayout {
 
         // mint LP token and take fee, which will be a dead share
         $.lpTotalSupply = FHE.max($.reserveX, $.reserveY); // sqrt is too expensive
-        account[address(this)].balanceOf[poolId] =
+        _increaseUserBalance(
+            address(this),
+            poolId,
             FHE.shr($.lpTotalSupply, FHE.asEuint32(feeBitShifts)) +
-            FHE.asEuint32(1); // round up
-        account[msg.sender].balanceOf[poolId] =
-            $.lpTotalSupply -
-            account[address(this)].balanceOf[poolId];
+                FHE.asEuint32(1) // round up
+        );
+        _increaseUserBalance(
+            msg.sender,
+            poolId,
+            $.lpTotalSupply - account[address(this)].balanceOf[poolId]
+        );
     }
 }

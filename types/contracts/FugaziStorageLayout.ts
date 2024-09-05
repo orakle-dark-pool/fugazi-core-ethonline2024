@@ -29,11 +29,14 @@ export interface FugaziStorageLayoutInterface extends Interface {
   getEvent(
     nameOrSignatureOrTopic:
       | "Deposit"
+      | "Donation"
       | "EIP712DomainChanged"
+      | "Harvest"
       | "PoolCreated"
       | "Withdraw"
       | "batchSettled"
       | "facetAdded"
+      | "liquidityRemoved"
       | "orderClaimed"
       | "orderSubmitted"
   ): EventFragment;
@@ -62,10 +65,34 @@ export namespace DepositEvent {
   export type LogDescription = TypedLogDescription<Event>;
 }
 
+export namespace DonationEvent {
+  export type InputTuple = [poolId: BytesLike];
+  export type OutputTuple = [poolId: string];
+  export interface OutputObject {
+    poolId: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
 export namespace EIP712DomainChangedEvent {
   export type InputTuple = [];
   export type OutputTuple = [];
   export interface OutputObject {}
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace HarvestEvent {
+  export type InputTuple = [poolId: BytesLike];
+  export type OutputTuple = [poolId: string];
+  export interface OutputObject {
+    poolId: string;
+  }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
   export type Log = TypedEventLog<Event>;
@@ -122,6 +149,19 @@ export namespace facetAddedEvent {
   export interface OutputObject {
     selector: string;
     facet: string;
+  }
+  export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
+  export type Filter = TypedDeferredTopicFilter<Event>;
+  export type Log = TypedEventLog<Event>;
+  export type LogDescription = TypedLogDescription<Event>;
+}
+
+export namespace liquidityRemovedEvent {
+  export type InputTuple = [poolId: BytesLike, epoch: BigNumberish];
+  export type OutputTuple = [poolId: string, epoch: bigint];
+  export interface OutputObject {
+    poolId: string;
+    epoch: bigint;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -249,11 +289,25 @@ export interface FugaziStorageLayout extends BaseContract {
     DepositEvent.OutputObject
   >;
   getEvent(
+    key: "Donation"
+  ): TypedContractEvent<
+    DonationEvent.InputTuple,
+    DonationEvent.OutputTuple,
+    DonationEvent.OutputObject
+  >;
+  getEvent(
     key: "EIP712DomainChanged"
   ): TypedContractEvent<
     EIP712DomainChangedEvent.InputTuple,
     EIP712DomainChangedEvent.OutputTuple,
     EIP712DomainChangedEvent.OutputObject
+  >;
+  getEvent(
+    key: "Harvest"
+  ): TypedContractEvent<
+    HarvestEvent.InputTuple,
+    HarvestEvent.OutputTuple,
+    HarvestEvent.OutputObject
   >;
   getEvent(
     key: "PoolCreated"
@@ -284,6 +338,13 @@ export interface FugaziStorageLayout extends BaseContract {
     facetAddedEvent.OutputObject
   >;
   getEvent(
+    key: "liquidityRemoved"
+  ): TypedContractEvent<
+    liquidityRemovedEvent.InputTuple,
+    liquidityRemovedEvent.OutputTuple,
+    liquidityRemovedEvent.OutputObject
+  >;
+  getEvent(
     key: "orderClaimed"
   ): TypedContractEvent<
     orderClaimedEvent.InputTuple,
@@ -310,6 +371,17 @@ export interface FugaziStorageLayout extends BaseContract {
       DepositEvent.OutputObject
     >;
 
+    "Donation(bytes32)": TypedContractEvent<
+      DonationEvent.InputTuple,
+      DonationEvent.OutputTuple,
+      DonationEvent.OutputObject
+    >;
+    Donation: TypedContractEvent<
+      DonationEvent.InputTuple,
+      DonationEvent.OutputTuple,
+      DonationEvent.OutputObject
+    >;
+
     "EIP712DomainChanged()": TypedContractEvent<
       EIP712DomainChangedEvent.InputTuple,
       EIP712DomainChangedEvent.OutputTuple,
@@ -319,6 +391,17 @@ export interface FugaziStorageLayout extends BaseContract {
       EIP712DomainChangedEvent.InputTuple,
       EIP712DomainChangedEvent.OutputTuple,
       EIP712DomainChangedEvent.OutputObject
+    >;
+
+    "Harvest(bytes32)": TypedContractEvent<
+      HarvestEvent.InputTuple,
+      HarvestEvent.OutputTuple,
+      HarvestEvent.OutputObject
+    >;
+    Harvest: TypedContractEvent<
+      HarvestEvent.InputTuple,
+      HarvestEvent.OutputTuple,
+      HarvestEvent.OutputObject
     >;
 
     "PoolCreated(address,address,bytes32)": TypedContractEvent<
@@ -363,6 +446,17 @@ export interface FugaziStorageLayout extends BaseContract {
       facetAddedEvent.InputTuple,
       facetAddedEvent.OutputTuple,
       facetAddedEvent.OutputObject
+    >;
+
+    "liquidityRemoved(bytes32,uint32)": TypedContractEvent<
+      liquidityRemovedEvent.InputTuple,
+      liquidityRemovedEvent.OutputTuple,
+      liquidityRemovedEvent.OutputObject
+    >;
+    liquidityRemoved: TypedContractEvent<
+      liquidityRemovedEvent.InputTuple,
+      liquidityRemovedEvent.OutputTuple,
+      liquidityRemovedEvent.OutputObject
     >;
 
     "orderClaimed(bytes32,uint32,address)": TypedContractEvent<

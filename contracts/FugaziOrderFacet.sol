@@ -30,26 +30,73 @@ contract FugaziOrderFacet is FugaziStorageLayout {
         );
 
         // burn the LP token and update total supply
-        account[msg.sender].balanceOf[poolId] =
-            account[msg.sender].balanceOf[poolId] -
-            exitAmount;
+        _decreaseUserBalance(msg.sender, poolId, exitAmount);
         $.lpTotalSupply = $.lpTotalSupply - exitAmount;
 
         // update the reserves & account token balance
         $.reserveX = $.reserveX - releaseX;
         $.reserveY = $.reserveY - releaseY;
-        account[msg.sender].balanceOf[_address2bytes32($.tokenX)] =
-            account[msg.sender].balanceOf[_address2bytes32($.tokenX)] +
-            releaseX;
-        account[msg.sender].balanceOf[_address2bytes32($.tokenY)] =
-            account[msg.sender].balanceOf[_address2bytes32($.tokenY)] +
-            releaseY;
+        _increaseUserBalance(msg.sender, _address2bytes32($.tokenX), releaseX);
+        _increaseUserBalance(msg.sender, _address2bytes32($.tokenY), releaseY);
+
+        // emit event
+        emit liquidityRemoved(poolId, $.epoch);
     }
 
     function submitOrder(
         bytes32 poolId,
         inEuint64 calldata _packedAmounts
     ) external onlyValidPool(poolId) returns (uint32) {
+        // get the pool and epoch
+        poolStateStruct storage $ = poolState[poolId];
+        batchStruct storage batch = $.batch[$.epoch];
+
+        // unpack the input
+        unpackedOrderStruct memory unpackedOrder = _unpackOrder(_packedAmounts);
+
+        // add the noise order first. Privacy fee is charged at this point.
+        if (activateNoiseOrder) {
+            _addNoiseOrder(unpackedOrder, $, batch);
+        }
+
+        // take swap fee
+        unpackedOrderStruct memory newUnpackedOrder = _chargeSwapFee(
+            $,
+            batch,
+            unpackedOrder
+        );
+
+        // deduct the balance from user account
+        _decreaseUserBalance(
+            msg.sender,
+            _address2bytes32($.tokenX),
+            newUnpackedOrder.amountX
+        );
+        _decreaseUserBalance(
+            msg.sender,
+            _address2bytes32($.tokenY),
+            newUnpackedOrder.amountY
+        );
+
+        // update the trader's order in the batch
+        _updateUserOrder(newUnpackedOrder, batch, msg.sender);
+
+        // update the aggregated orders in the batch
+        _updateBatch(newUnpackedOrder, batch);
+
+        // if this is the first order of epoch from trader then add the unclaimed order
+        _addUnclaimedOrder(msg.sender, poolId, $.epoch);
+
+        // emit event
+        emit orderSubmitted(poolId, $.epoch);
+
+        // return the epoch of the order received
+        return $.epoch;
+    }
+
+    function _unpackOrder(
+        inEuint64 calldata _packedAmounts
+    ) internal pure returns (unpackedOrderStruct memory) {
         // transform the type
         euint64 packedAmounts = FHE.asEuint64(_packedAmounts);
 
@@ -67,6 +114,7 @@ contract FugaziOrderFacet is FugaziStorageLayout {
             and noiseAmplitude == 1024
             then the protocol owned account will randomly
             sell 100 tokenX or sell 12300 tokenY.
+            fee will be charged in tokenX.
         */
         unpackedOrderStruct memory unpackedOrder;
         unpackedOrder.amountY = FHE.asEuint32(
@@ -86,26 +134,27 @@ contract FugaziOrderFacet is FugaziStorageLayout {
             FHE.asEuint64(0)
         );
         unpackedOrder.isNoiseReferenceX = FHE.eq(
-            FHE.and(packedAmounts, FHE.asEuint64(2147483648)), // 2^31
+            FHE.and(packedAmounts, FHE.asEuint64(2147483648)), // 2^31 (32'th bit)
             FHE.asEuint64(0)
         );
         unpackedOrder.noiseAmplitude = FHE.asEuint32(
             FHE.shr(
                 FHE.and(
                     packedAmounts,
-                    FHE.asEuint64(17583596109824) // (2^43 - 1) - (2^32 - 1)
+                    FHE.asEuint64(8791798054912) // (2^43 - 1) - (2^32 - 1)
                 ),
                 FHE.asEuint64(32)
             )
         );
 
-        // get the pool and epoch
-        poolStateStruct storage $ = poolState[poolId];
-        batchStruct storage batch = $.batch[$.epoch];
+        return unpackedOrder;
+    }
 
-        // add the noise order first. Privacy fee is charged at this point.
-        _addNoiseOrder(unpackedOrder, $, batch);
-
+    function _chargeSwapFee(
+        poolStateStruct storage $,
+        batchStruct storage batch,
+        unpackedOrderStruct memory unpackedOrder
+    ) internal returns (unpackedOrderStruct memory orderAfterSwapFee) {
         // adjust the amount; u cannot sell or mint more than you have!
         unpackedOrder.amountX = FHE.min(
             unpackedOrder.amountX,
@@ -116,58 +165,131 @@ contract FugaziOrderFacet is FugaziStorageLayout {
             account[msg.sender].balanceOf[_address2bytes32($.tokenY)]
         );
 
-        // take swap fee
-        unpackedOrderStruct memory newUnpackedOrder = _chargeSwapFee(
-            $,
-            batch,
-            unpackedOrder
-        );
-
-        // deduct the balance from user account
-        account[msg.sender].balanceOf[_address2bytes32($.tokenX)] =
-            account[msg.sender].balanceOf[_address2bytes32($.tokenX)] -
-            newUnpackedOrder.amountX;
-        account[msg.sender].balanceOf[_address2bytes32($.tokenY)] =
-            account[msg.sender].balanceOf[_address2bytes32($.tokenY)] -
-            newUnpackedOrder.amountY;
-
-        // update the trader's order in the batch
-        batch.order[msg.sender].swapX = FHE.select(
-            unpackedOrder.isSwap,
+        // compute fee
+        euint32 feeX = FHE.shr(
             unpackedOrder.amountX,
-            FHE.asEuint32(0)
+            FHE.asEuint32(feeBitShifts)
         );
-        batch.order[msg.sender].swapY = FHE.select(
-            unpackedOrder.isSwap,
+        euint32 feeY = FHE.shr(
             unpackedOrder.amountY,
-            FHE.asEuint32(0)
+            FHE.asEuint32(feeBitShifts)
         );
-        batch.order[msg.sender].mintX = FHE.select(
-            unpackedOrder.isSwap,
-            FHE.asEuint32(0),
-            unpackedOrder.amountX
-        );
-        batch.order[msg.sender].mintY = FHE.select(
-            unpackedOrder.isSwap,
-            FHE.asEuint32(0),
-            unpackedOrder.amountY
-        );
-        batch.order[msg.sender].claimed = false;
 
-        // update the aggregated orders in the batch
-        batch.swapX = batch.swapX + batch.order[msg.sender].swapX;
-        batch.swapY = batch.swapY + batch.order[msg.sender].swapY;
-        batch.mintX = batch.mintX + batch.order[msg.sender].mintX;
-        batch.mintY = batch.mintY + batch.order[msg.sender].mintY;
+        // deduct the fee from user balance...
+        _decreaseUserBalance(msg.sender, _address2bytes32($.tokenX), feeX);
+        _decreaseUserBalance(msg.sender, _address2bytes32($.tokenY), feeY);
 
-        // if this is the first order of epoch from trader then add the unclaimed order
-        _addUnclaimedOrder(msg.sender, poolId, $.epoch);
+        // half goes to protocol account
+        euint32 protocolShareX = FHE.shr(feeX, FHE.asEuint32(1));
+        euint32 protocolShareY = FHE.shr(feeY, FHE.asEuint32(1));
+        $.protocolX = $.protocolX + protocolShareX;
+        $.protocolY = $.protocolY + protocolShareY;
 
-        // emit event
-        emit orderSubmitted(poolId, $.epoch);
+        // record the rest in batch
+        batch.feeX = batch.feeX + feeX - protocolShareX;
+        batch.feeY = batch.feeY + feeY - protocolShareY;
 
-        // return the epoch of the order received
-        return $.epoch;
+        orderAfterSwapFee.isSwap = unpackedOrder.isSwap;
+        orderAfterSwapFee.amountX = unpackedOrder.amountX - feeX;
+        orderAfterSwapFee.amountY = unpackedOrder.amountY - feeY;
+    }
+
+    function _updateUserOrder(
+        unpackedOrderStruct memory unpackedOrder,
+        batchStruct storage batch,
+        address trader
+    ) internal {
+        // update the trader's order in the batch
+        batch.order[trader].swapX =
+            batch.order[trader].swapX +
+            FHE.select(
+                unpackedOrder.isSwap,
+                unpackedOrder.amountX,
+                FHE.asEuint32(0)
+            );
+        batch.order[trader].swapY =
+            batch.order[trader].swapY +
+            FHE.select(
+                unpackedOrder.isSwap,
+                unpackedOrder.amountY,
+                FHE.asEuint32(0)
+            );
+        batch.order[trader].mintX =
+            batch.order[trader].mintX +
+            FHE.select(
+                unpackedOrder.isSwap,
+                FHE.asEuint32(0),
+                unpackedOrder.amountX
+            );
+        batch.order[trader].mintY =
+            batch.order[trader].mintY +
+            FHE.select(
+                unpackedOrder.isSwap,
+                FHE.asEuint32(0),
+                unpackedOrder.amountY
+            );
+        batch.order[trader].claimed = false;
+    }
+
+    function _updateBatch(
+        unpackedOrderStruct memory unpackedOrder,
+        batchStruct storage batch
+    ) internal {
+        batch.swapX =
+            batch.swapX +
+            FHE.select(
+                unpackedOrder.isSwap,
+                unpackedOrder.amountX,
+                FHE.asEuint32(0)
+            );
+        batch.swapY =
+            batch.swapY +
+            FHE.select(
+                unpackedOrder.isSwap,
+                unpackedOrder.amountY,
+                FHE.asEuint32(0)
+            );
+        batch.mintX =
+            batch.mintX +
+            FHE.select(
+                unpackedOrder.isSwap,
+                FHE.asEuint32(0),
+                unpackedOrder.amountX
+            );
+        batch.mintY =
+            batch.mintY +
+            FHE.select(
+                unpackedOrder.isSwap,
+                FHE.asEuint32(0),
+                unpackedOrder.amountY
+            );
+    }
+
+    function _addUnclaimedOrder(
+        address trader,
+        bytes32 poolId,
+        uint32 epoch
+    ) internal {
+        accountStruct storage $ = account[trader];
+
+        // check if the order is already in the unclaimed order list
+        uint256 orderCount = 0;
+        for (uint256 i = 0; i < $.unclaimedOrders.length; i++) {
+            if (
+                $.unclaimedOrders[i].poolId == poolId &&
+                $.unclaimedOrders[i].epoch == epoch
+            ) {
+                orderCount++;
+                break;
+            }
+        }
+
+        // if not, add the order
+        if (orderCount == 0) {
+            $.unclaimedOrders.push(
+                unclaimedOrderStruct({poolId: poolId, epoch: epoch})
+            );
+        }
     }
 
     function _addNoiseOrder(
@@ -200,24 +322,32 @@ contract FugaziOrderFacet is FugaziStorageLayout {
         unpackedOrderStruct memory unpackedOrder,
         poolStateStruct storage $
     ) internal view returns (euint32 noiseX, euint32 noiseY) {
-        noiseX = FHE.shr(
-            FHE.select(
-                unpackedOrder.isNoiseReferenceX,
-                unpackedOrder.amountX,
-                FHE.asEuint32(0)
-            ) * unpackedOrder.noiseAmplitude,
-            FHE.asEuint32(10)
+        noiseX = FHE.select(
+            unpackedOrder.isNoiseReferenceX,
+            FHE.shr(
+                unpackedOrder.amountX * unpackedOrder.noiseAmplitude,
+                FHE.asEuint32(10)
+            ),
+            FHE.asEuint32(0)
         );
-        noiseY = FHE.shr(
-            FHE.select(
-                unpackedOrder.isNoiseReferenceX,
-                FHE.asEuint32(0),
-                unpackedOrder.amountY
-            ) * unpackedOrder.noiseAmplitude,
-            FHE.asEuint32(10)
+        noiseY = FHE.select(
+            unpackedOrder.isNoiseReferenceX,
+            FHE.asEuint32(0),
+            FHE.shr(
+                unpackedOrder.amountY * unpackedOrder.noiseAmplitude,
+                FHE.asEuint32(10)
+            )
         );
-        noiseX = noiseX + (noiseY * $.reserveX) / $.reserveY;
-        noiseY = noiseY + (noiseX * $.reserveY) / $.reserveX;
+        noiseX = FHE.select(
+            unpackedOrder.isNoiseReferenceX,
+            noiseX,
+            (noiseY * $.reserveX) / $.reserveY
+        );
+        noiseY = FHE.select(
+            unpackedOrder.isNoiseReferenceX,
+            (noiseX * $.reserveY) / $.reserveX,
+            noiseY
+        );
     }
 
     function _computePrivacyFee(
@@ -228,13 +358,13 @@ contract FugaziOrderFacet is FugaziStorageLayout {
     ) internal view returns (euint32, euint32) {
         euint32 feeX = FHE.select(
             unpackedOrder.isNoiseReferenceX,
-            ((noiseX * noiseY) / $.reserveY) + FHE.asEuint32(1), // round up
+            ((noiseX * noiseY) / $.reserveY),
             FHE.asEuint32(0)
         );
         euint32 feeY = FHE.select(
             unpackedOrder.isNoiseReferenceX,
             FHE.asEuint32(0),
-            ((noiseX * noiseY) / $.reserveX) + FHE.asEuint32(1) // round up
+            ((noiseX * noiseY) / $.reserveX)
         );
 
         return (feeX, feeY);
@@ -247,25 +377,21 @@ contract FugaziOrderFacet is FugaziStorageLayout {
     ) internal {
         // trader must have enough balance to pay the fee
         FHE.req(
-            FHE.gt(
+            FHE.gte(
                 account[msg.sender].balanceOf[_address2bytes32($.tokenX)],
                 feeX
             )
         );
         FHE.req(
-            FHE.gt(
+            FHE.gte(
                 account[msg.sender].balanceOf[_address2bytes32($.tokenY)],
                 feeY
             )
         );
 
         // deduct the fee from user balance...
-        account[msg.sender].balanceOf[_address2bytes32($.tokenX)] =
-            account[msg.sender].balanceOf[_address2bytes32($.tokenX)] -
-            feeX;
-        account[msg.sender].balanceOf[_address2bytes32($.tokenY)] =
-            account[msg.sender].balanceOf[_address2bytes32($.tokenY)] -
-            feeY;
+        _decreaseUserBalance(msg.sender, _address2bytes32($.tokenX), feeX);
+        _decreaseUserBalance(msg.sender, _address2bytes32($.tokenY), feeY);
 
         // and add it to protocol owned account
         $.protocolX = $.protocolX + feeX;
@@ -283,15 +409,22 @@ contract FugaziOrderFacet is FugaziStorageLayout {
 
         // we cannot sell more than we have
         euint32 availableX = FHE.min(coin * noiseX, $.protocolX);
-        euint32 availableY = FHE.min(coin * noiseY, $.protocolY);
+        euint32 availableY = FHE.min(
+            (FHE.asEuint32(1) - coin) * noiseY,
+            $.protocolY
+        );
 
         // deduct the balance from protocol account
         $.protocolX = $.protocolX - availableX;
         $.protocolY = $.protocolY - availableY;
 
         // record the order into the batch
-        batch.order[address(this)].swapX = availableX;
-        batch.order[address(this)].swapY = availableY;
+        batch.order[address(this)].swapX =
+            batch.order[address(this)].swapX +
+            availableX;
+        batch.order[address(this)].swapY =
+            batch.order[address(this)].swapY +
+            availableY;
         batch.order[address(this)].claimed = false;
 
         batch.swapX = batch.swapX + availableX;
@@ -306,7 +439,7 @@ contract FugaziOrderFacet is FugaziStorageLayout {
     }
 
     function _coinToss() internal view returns (euint32) {
-        return FHE.shr(_getFakeRandomU32(), FHE.asEuint32(31));
+        return FHE.and(_getFakeRandomU32(), FHE.asEuint32(1));
     }
 
     function _getFakeRandomU32() internal view returns (euint32) {
@@ -319,70 +452,5 @@ contract FugaziOrderFacet is FugaziStorageLayout {
         uint256 blockHash = uint256(blockhash(blockNumber));
 
         return blockHash;
-    }
-
-    function _addUnclaimedOrder(
-        address trader,
-        bytes32 poolId,
-        uint32 epoch
-    ) internal {
-        accountStruct storage $ = account[trader];
-
-        // check if the order is already in the unclaimed order list
-        uint256 orderCount = 0;
-        for (uint256 i = 0; i < $.unclaimedOrders.length; i++) {
-            if (
-                $.unclaimedOrders[i].poolId == poolId &&
-                $.unclaimedOrders[i].epoch == epoch
-            ) {
-                orderCount++;
-                break;
-            }
-        }
-
-        // if not, add the order
-        if (orderCount == 0) {
-            $.unclaimedOrders.push(
-                unclaimedOrderStruct({poolId: poolId, epoch: epoch})
-            );
-        }
-    }
-
-    function _chargeSwapFee(
-        poolStateStruct storage $,
-        batchStruct storage batch,
-        unpackedOrderStruct memory unpackedOrder
-    ) internal returns (unpackedOrderStruct memory orderAfterSwapFee) {
-        // compute fee
-        euint32 feeX = FHE.shr(
-            unpackedOrder.amountX,
-            FHE.asEuint32(feeBitShifts)
-        );
-        euint32 feeY = FHE.shr(
-            unpackedOrder.amountY,
-            FHE.asEuint32(feeBitShifts)
-        );
-
-        // no need to check the feasibility of fee deduction
-
-        // deduct the fee from user balance...
-        account[msg.sender].balanceOf[_address2bytes32($.tokenX)] =
-            account[msg.sender].balanceOf[_address2bytes32($.tokenX)] -
-            feeX;
-        account[msg.sender].balanceOf[_address2bytes32($.tokenY)] =
-            account[msg.sender].balanceOf[_address2bytes32($.tokenY)] -
-            feeY;
-
-        // half goes to protocol account
-        $.protocolX = $.protocolX + FHE.shr(feeX, FHE.asEuint32(1));
-        $.protocolY = $.protocolY + FHE.shr(feeY, FHE.asEuint32(1));
-
-        // record the rest in batch
-        batch.feeX = batch.feeX + feeX - FHE.shr(feeX, FHE.asEuint32(1));
-        batch.feeY = batch.feeY + feeY - FHE.shr(feeY, FHE.asEuint32(1));
-
-        orderAfterSwapFee.isSwap = unpackedOrder.isSwap;
-        orderAfterSwapFee.amountX = unpackedOrder.amountX - feeX;
-        orderAfterSwapFee.amountY = unpackedOrder.amountY - feeY;
     }
 }

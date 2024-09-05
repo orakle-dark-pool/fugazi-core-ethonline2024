@@ -48,6 +48,8 @@ contract FugaziStorageLayout is Permissioned {
     // events
     event Deposit(address recipient, address token);
     event Withdraw(address recipient, address token);
+    event Donation(bytes32 poolId);
+    event Harvest(bytes32 poolId);
 
     // modifiers
 
@@ -63,6 +65,26 @@ contract FugaziStorageLayout is Permissioned {
     // functions
     function _address2bytes32(address addr) internal pure returns (bytes32) {
         return bytes32(bytes20(uint160(addr))) >> 96;
+    }
+
+    function _increaseUserBalance(
+        address user,
+        bytes32 token,
+        euint32 amount
+    ) internal {
+        account[user].balanceOf[token] =
+            account[user].balanceOf[token] +
+            amount;
+    }
+
+    function _decreaseUserBalance(
+        address user,
+        bytes32 token,
+        euint32 amount
+    ) internal {
+        account[user].balanceOf[token] =
+            account[user].balanceOf[token] -
+            amount;
     }
 
     /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/
@@ -111,7 +133,7 @@ contract FugaziStorageLayout is Permissioned {
     mapping(bytes32 => poolStateStruct) internal poolState;
     uint32 internal constant harvestInterval = 7 days;
     uint32 internal constant epochTime = 30 seconds;
-    uint32 internal constant feeBitShifts = 10; // 1/1024 ~ 0.1%
+    uint32 internal constant feeBitShifts = 8; // 1/256 ~ 0.4%
 
     // functions
     function _getPoolId(
@@ -136,6 +158,7 @@ contract FugaziStorageLayout is Permissioned {
     error BatchIsInSettlement();
 
     // events
+    event liquidityRemoved(bytes32 poolId, uint32 epoch);
     event orderSubmitted(bytes32 poolId, uint32 epoch);
     event batchSettled(bytes32 poolId, uint32 epoch);
     event orderClaimed(bytes32 poolId, uint32 epoch, address claimer);
@@ -197,7 +220,7 @@ contract FugaziStorageLayout is Permissioned {
     }
 
     // storage variables
-
+    bool internal activateNoiseOrder = false;
     // functions
 
     /*´:°•.°+.*•´.*:˚.°*.˚•´.°:°•.°•.*•´.*:˚.°*.˚•´.°:°•.°+.*•´.*:*/

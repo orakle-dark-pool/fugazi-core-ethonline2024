@@ -74,6 +74,7 @@ task("task:addFacets").setAction(async function (
     {
       facet: FugaziPoolActionFacet.address,
       selectors: [
+        "4f62581c", // toggleNoiseOrder
         "eeb8f2b5", // settleBatch
         "1bcc8d25", // claim
         "b258399d", // claimProtocolOrder
