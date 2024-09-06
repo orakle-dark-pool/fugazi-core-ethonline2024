@@ -128,7 +128,7 @@ task("task:removeLiquidity")
     }
 
     ///////////////////////////////////////////////////////////////
-    //                  Before removeLiquidity                   //
+    //                   After removeLiquidity                   //
     ///////////////////////////////////////////////////////////////
 
     // check balances after removing liquidity

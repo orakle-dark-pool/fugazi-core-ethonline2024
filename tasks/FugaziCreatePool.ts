@@ -17,10 +17,10 @@ task("task:createPool")
     const [signer] = await ethers.getSigners();
 
     // input arguments
-    const amount0 = Math.floor((taskArguments.amount0 * 9) / 10);
+    const amount0 = Math.floor((taskArguments.amount0 * 8) / 10);
     const donateAmount0 = Number(taskArguments.amount0) - amount0;
     const token0Name = taskArguments.name0;
-    const amount1 = Math.floor((taskArguments.amount1 * 9) / 10);
+    const amount1 = Math.floor((taskArguments.amount1 * 8) / 10);
     const donateAmount1 = Number(taskArguments.amount1) - amount1;
     const token1Name = taskArguments.name1;
 

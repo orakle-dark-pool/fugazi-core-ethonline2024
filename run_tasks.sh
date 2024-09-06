@@ -37,16 +37,19 @@ npx hardhat task:createPool --name0 FakeFGZ --amount0 8000 --name1 FakeUSD --amo
 # get pool infos
 npx hardhat task:getPoolInfo --name0 FakeFGZ --name1 FakeUSD $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" ) \
 && npx hardhat task:getPoolInfo --name0 FakeUSD --name1 FakeEUR $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" ) \
-&& npx hardhat task:getPoolInfo --name0 FakeFGZ --name1 FakeEUR $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" )
+&& npx hardhat task:getPoolInfo --name0 FakeEUR --name1 FakeFGZ $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" )
 
 # removeLiquidity
 npx hardhat task:removeLiquidity --name0 FakeFGZ --name1 FakeUSD --amount 100 $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" ) \
 && npx hardhat task:removeLiquidity --name0 FakeUSD --name1 FakeEUR --amount 100 $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" ) \
-&& npx hardhat task:removeLiquidity --name0 FakeFGZ --name1 FakeEUR --amount 100 $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" )
+&& npx hardhat task:removeLiquidity --name0 FakeEUR --name1 FakeFGZ --amount 100 $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" )
 
 # addLiquidity
-npx hardhat task:addLiquidity --name0 FakeFGZ --name1 FakeUSD $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" ) \
-&& npx hardhat task:addLiquidity --name0 FakeUSD --name1 FakeEUR $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" ) \
-&& npx hardhat task:addLiquidity --name0 FakeFGZ --name1 FakeEUR $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" )
+npx hardhat task:addLiquidity --name0 FakeFGZ --name1 FakeUSD --noiseamplitude 0 $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" ) \
+&& npx hardhat task:addLiquidity --name0 FakeUSD --name1 FakeEUR --noiseamplitude 512 $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" ) \
+&& npx hardhat task:addLiquidity --name0 FakeEUR --name1 FakeFGZ --noiseamplitude 1024 $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" )
 
 # swap
+npx hardhat task:swap --namein FakeFGZ --nameout FakeUSD --noiseamplitude 1024 $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" ) \
+&& npx hardhat task:swap --namein FakeUSD --nameout FakeEUR --noiseamplitude 1536 $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" ) \
+&& npx hardhat task:swap --namein FakeEUR --nameout FakeFGZ --noiseamplitude 2047 $( [[ "$USE_TESTNET" == "true" ]] && echo "--network testnet" )

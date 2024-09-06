@@ -4,3 +4,8 @@ artifacts/
 deployments/localfhenix/
 .env
 run_tasks.sh.example
+
+# python
+.venv/
+__pycache__/
+poetry.lock

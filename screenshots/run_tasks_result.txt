@@ -1,0 +1,549 @@
+➜  fugazi-core-ethonline2024 git:(main) ✗ source ./run_tasks.sh
+Nothing to compile
+No need to generate any newer typings.
+LocalFhenix container is already running
+Nothing to compile
+No need to generate any newer typings.
+**************************************************
+Deploying token contracts and distributor...
+Encrypting FakeUSD initial supply: 32767
+Encrypted FakeUSD initial supply: {
+  data: Uint8Array(16604) [
+     16,   8,   0,   0,   0,   0,   0,   0, 173, 189,  14,  28,
+    194,  91, 145, 150, 220,  28, 119,  32, 162,  88, 251, 187,
+     44, 165, 216, 119, 210,  62, 197, 201, 251, 185,  89, 113,
+     38,  22,  24, 211, 134, 126, 191, 201, 135, 214, 104, 254,
+    232, 121, 152, 150,  93,  27,  53, 200, 116,  15,   5, 191,
+    255, 232, 115, 144, 145,  95, 182, 205, 202, 240, 193,  58,
+    149, 168, 220, 202, 224,  22, 255,  37,  68, 133, 174, 140,
+      2, 226, 168,  16,  13, 240, 206,  35,  71,  25,  21,  22,
+     26,  32, 150, 175,
+    ... 16504 more items
+  ]
+}
+deploying "FakeUSD" (tx: 0x79ddb788c45d5bdbfd903898ea57fff1b77cf63dd50e18174272ff19d692e6d2)...: deployed at 0x80EF863DC31A934948294032E3A838d0CC31Be48 with 454795796 gas
+FakeUSD contract deployed at:  0x80EF863DC31A934948294032E3A838d0CC31Be48
+Encrypting FakeEUR initial supply: 32767
+Encrypted FakeEUR initial supply: {
+  data: Uint8Array(16604) [
+     16,   8,   0,   0,   0,   0,   0,   0, 238, 210, 198, 205,
+    235, 104, 192, 146, 220,  46, 254, 133, 137, 210, 205, 100,
+    235, 167, 145,   5, 156,  37, 236,  36, 193, 144,  63, 168,
+    143, 115,  94, 143,  17, 213, 192,  10, 211, 197, 150,  80,
+    235, 195, 241,  31,  63, 244, 156, 216, 240,  49,  89, 233,
+     37, 202, 150, 173, 253,  31, 205,  77, 134,  90,  40, 100,
+     55,  26,  52, 242, 196,  61, 248,  75, 245, 216, 122, 116,
+    118, 249,  16,  25, 138, 174, 191, 250,  36,  25, 120,  22,
+     48, 246,   3, 126,
+    ... 16504 more items
+  ]
+}
+deploying "FakeEUR" (tx: 0x0d9dfe64896c03c37e8600fad87faf6a24fd5fe12c3a40ba2556cff80218261f)...: deployed at 0x6f3cf2F0a18922c949A8e77a2f04A7ab60f481ed with 454599074 gas
+FakeEUR contract deployed at:  0x6f3cf2F0a18922c949A8e77a2f04A7ab60f481ed
+Encrypting FakeFGZ initial supply: 32767
+Encrypted FakeFGZ initial supply: {
+  data: Uint8Array(16604) [
+     16,   8,   0,   0,   0,   0,   0,   0, 248, 118, 145,  48,
+     98,  22, 119, 118, 154, 108,  95, 160,   1,  33,  63, 199,
+     88,  42, 134, 130,  87, 144, 114,  27, 232,  92, 166,  98,
+    135, 205,  10, 137,  85, 148, 236, 109, 196, 130,  50, 219,
+    146, 121, 156,  81, 212,  85,  49,  52, 130,  14, 174, 188,
+    170,  57,   2,  18, 174,  92, 212,  39,   0,  59, 183, 164,
+    232, 250,  27,  66, 109,  24,   5, 230,  25,  75, 221, 196,
+    235,  10, 233, 136, 210, 184, 106, 202, 150, 198, 111, 253,
+     88, 204,   7,  84,
+    ... 16504 more items
+  ]
+}
+deploying "FakeFGZ" (tx: 0xc1491524cbb8d81751c89426a7e8ac02aacbab61bb23592c5d2ea2a8d98afb5f)...: deployed at 0x7dcD44FA00cbd453B999462630b41B46412Df687 with 454563137 gas
+FakeFGZ contract deployed at:  0x7dcD44FA00cbd453B999462630b41B46412Df687
+deploying "TokenDistributor" (tx: 0x39355f6f61bc9d4cb81f2e57015c5d73f0d7306c26dc831d6405eeea1f196227)...: deployed at 0x06A552B74946FA6ef2F07dd88E1F481A2aD3CD28 with 34599153 gas
+TokenDistributor contract deployed at:  0x06A552B74946FA6ef2F07dd88E1F481A2aD3CD28
+Nothing to compile
+No need to generate any newer typings.
+**************************************************
+Deploying Fugazi contracts...
+deploying "FugaziCore" (tx: 0x269d0710e55eb655ed2bfcf9be46787042a5281566a8b812d9955eef85047eb9)...: deployed at 0xB33073c09855eAf84512c43d5f45dB33517F854d with 52159572 gas
+FugaziCore contract deployed at:  0xB33073c09855eAf84512c43d5f45dB33517F854d
+deploying "FugaziBalanceFacet" (tx: 0xe8fa7a661b63b3234f5040732ad0d41048cf65d9c282e331969e7f1ed8e9950a)...: deployed at 0xC89681002A83bB6D8e5B846f1Ae5D2540303c075 with 82609896 gas
+FugaziBalanceFacet contract deployed at:  0xC89681002A83bB6D8e5B846f1Ae5D2540303c075
+deploying "FugaziViewerFacet" (tx: 0x446bc20a1973ae2fa4a34e7b956a8f221e8e1e4f0781d20de5785ba8d1b15c49)...: deployed at 0xEF25E80b0902A796B1F4B0257e67eF286168afBa with 90327572 gas
+FugaziViewerFacet contract deployed at:  0xEF25E80b0902A796B1F4B0257e67eF286168afBa
+deploying "FugaziPoolRegistryFacet" (tx: 0xfc1727dbce7fb435f6998adce1ddafff001f0d6ccf7efbac120bf28ec7992b37)...: deployed at 0xef93a85eA35c2Fe2bfaaBf4CB13d191c420A33fD with 75725686 gas
+FugaziPoolRegistryFacet contract deployed at:  0xef93a85eA35c2Fe2bfaaBf4CB13d191c420A33fD
+deploying "FugaziOrderFacet" (tx: 0x4b67d9b29f4ddd809daa28f977b1540c6d0746d7d5e76590056664a4d20c02f5)...: deployed at 0x2d072673E16a3Ad6AD6757B3595B0dDC199Cf68A with 108685519 gas
+FugaziOrderFacet contract deployed at:  0x2d072673E16a3Ad6AD6757B3595B0dDC199Cf68A
+deploying "FugaziPoolActionFacet" (tx: 0x8d2e662046860d6868f54a436f10690853e21dc2719bb992dc366f1dea5f09ce)...: deployed at 0x198b88AA663d0007e58d6270415eCe8022Ea6154 with 85763219 gas
+FugaziPoolActionFacet contract deployed at:  0x198b88AA663d0007e58d6270415eCe8022Ea6154
+**************************************************
+Running addFacets
+Loading FugaziCore contract...
+Loading facet addresses...
+Constructing input array...
+Adding facets and selectors...
+Facets and selectors added successfully! tx hash: 0x321ae34ca289a7c99a2a8eb8ec1c48ed7c76b77e428f96822bee896a3055e7b3
+**************************************************
+Running deposit: depositting 10000 FakeFGZ to TokenDistributor
+Balance before deposit: 32767n
+Approving TokenDistributor to spend FakeFGZ...
+Approved TokenDistributor to spend. Tx hash: 0x07835063ec7f8ff36a8988c0090c495a9d4b36c71f1a1b2ee0391d4c49d9f381
+Depositing 10000 FakeFGZ to TokenDistributor...
+Deposited 10000 FakeFGZ to TokenDistributor. Tx hash: 0x1d5a5c3c26427b3c8a6e700e2fb521ad3c4b4e8c0b79a8cc98c9ec4c31bf654c
+Balance after deposit: 22767n
+**************************************************
+Running deposit: depositting 10000 FakeUSD to TokenDistributor
+Balance before deposit: 32767n
+Approving TokenDistributor to spend FakeUSD...
+Approved TokenDistributor to spend. Tx hash: 0x40a92201620106b71c8bb681a399e7cac5c3cd44b7d50a33bc3ed543ba2fe1a3
+Depositing 10000 FakeUSD to TokenDistributor...
+Deposited 10000 FakeUSD to TokenDistributor. Tx hash: 0xc3cfe5dadd217291b1dc58ac77453075db4611cadc4d6dc6ea925d77c588c81d
+Balance after deposit: 22767n
+**************************************************
+Running deposit: depositting 10000 FakeEUR to TokenDistributor
+Balance before deposit: 32767n
+Approving TokenDistributor to spend FakeEUR...
+Approved TokenDistributor to spend. Tx hash: 0x09f4ccb5dd329bb01fde2310b2870916aa90cb92ecbbbdc7f9960c6964bada95
+Depositing 10000 FakeEUR to TokenDistributor...
+Deposited 10000 FakeEUR to TokenDistributor. Tx hash: 0xcd6226ba70444f31e278af62a5fdf08121f2652a493343b476f4f7dec01683df
+Balance after deposit: 22767n
+**************************************************
+Running claim: claiming FakeFGZ from TokenDistributor
+Balance before claim: 22767n
+Claiming FakeFGZ...
+Claimed token from distributor. Tx hash: 0xb6dadb734c309902b4c5600469123cfa0878451e82a39d0d1e29ba398f0d5be7
+Balance after claim: 23392n
+**************************************************
+Running claim: claiming FakeUSD from TokenDistributor
+Balance before claim: 22767n
+Claiming FakeUSD...
+Claimed token from distributor. Tx hash: 0xdbe70f2ae7208a6f6f8f5065bd69581e8d0cea3cf112ecded776ad87270bf38f
+Balance after claim: 23392n
+**************************************************
+Running claim: claiming FakeEUR from TokenDistributor
+Balance before claim: 22767n
+Claiming FakeEUR...
+Claimed token from distributor. Tx hash: 0xf2e8d886b637ca9d3eacde6b83c259ada355a3375a9985558b726e3747f787f6
+Balance after claim: 23392n
+**************************************************
+Running deposit: depositting 32767 FakeUSD to Fugazi
+Got decrypted balance in wallet before deposit: 23392
+Got decrypted balance in Fugazi before deposit: 0
+Encrypting 32767...
+Encrypted 32767: {
+  data: Uint8Array(16604) [
+     16,   8,   0,   0,   0,   0,   0,   0, 241, 218,  84,  48,
+     41, 193, 248, 183,  45, 201,  68, 206, 193, 110, 133, 225,
+     39,  40, 238,  13, 190,  34,  22,   7,  54,  97, 198,   0,
+    156, 232,  94, 156,  36, 158,  28,  74, 210, 118, 165, 153,
+      5,  93, 235, 132,   7, 242,  71, 145,  41, 247,  77,  70,
+    191, 242,  23, 168, 249, 242,  38, 118, 221, 124,  71,   8,
+    110,  35, 117, 132,   5, 174, 219, 228, 209, 165, 186, 169,
+     13, 116, 167,  88,  80, 155,  59,  19, 126, 225,  26, 254,
+    150, 100, 243,  25,
+    ... 16504 more items
+  ]
+}
+Approving 32767 FakeUSD to Fugazi...
+Approved 32767 FakeUSD to Fugazi. tx hash: 0xa29b6c9d0e81997cba66a5a904261a81fcb62f6cd2a5c12faee826c1cf5b2b0a
+Depositing 32767 FakeUSD to Fugazi...
+Deposited 32767 FakeUSD to Fugazi. tx hash: 0x595dc2baf742eaf8a032248387c06b9027bd17b084835029ab29cea1f10f9429
+Got decrypted balance in wallet after deposit: 0
+Got decrypted balance in Fugazi after deposit: 23392
+**************************************************
+Running deposit: depositting 32767 FakeFGZ to Fugazi
+Got decrypted balance in wallet before deposit: 23392
+Got decrypted balance in Fugazi before deposit: 0
+Encrypting 32767...
+Encrypted 32767: {
+  data: Uint8Array(16604) [
+     16,   8,   0,   0,   0,   0,   0,   0,  46,   0, 171, 229,
+     72, 182, 199,   9,  46,  32, 185, 121, 195, 198, 156, 210,
+    191,  22, 183, 215, 132,  19, 218,  58, 156, 104,   6,  98,
+    132,  63,  58, 105, 180,  47, 117, 153,  91, 215,  63,   9,
+    250, 154,  70, 187, 160,  30, 220, 164, 220,  63,  13, 135,
+     66,  18,  92, 123, 137, 193, 105,  76, 191,  93, 171, 220,
+    124, 151,  40, 187, 186,  45,  18, 171, 168,  66, 142, 243,
+    119,  43,  72, 100, 218, 107,  60, 108,  79, 223,  44,  72,
+     37,  72, 188, 226,
+    ... 16504 more items
+  ]
+}
+Approving 32767 FakeFGZ to Fugazi...
+Approved 32767 FakeFGZ to Fugazi. tx hash: 0xb98d6999308303d0d25fb9182b930eea8d9ceb5fa6f56b61768f9fe9df4e336e
+Depositing 32767 FakeFGZ to Fugazi...
+Deposited 32767 FakeFGZ to Fugazi. tx hash: 0xc6870ec23162b74f3d284464310ae878f5f4edde3c22c26d2f450b64ed1b8391
+Got decrypted balance in wallet after deposit: 0
+Got decrypted balance in Fugazi after deposit: 23392
+**************************************************
+Running deposit: depositting 32767 FakeEUR to Fugazi
+Got decrypted balance in wallet before deposit: 23392
+Got decrypted balance in Fugazi before deposit: 0
+Encrypting 32767...
+Encrypted 32767: {
+  data: Uint8Array(16604) [
+     16,   8,   0,   0,   0,   0,   0,   0,  14, 132,  38, 251,
+     85,   9, 238,  17, 243, 120, 166,  19, 178, 176,  28, 253,
+    114,   1, 115, 155, 209, 104, 126, 253, 218, 244,  71, 164,
+    106, 241, 142, 147, 157, 174,  95, 122, 134,  71,  82,  40,
+      4, 111, 153,  45, 253, 237, 230,  34, 218, 149,  84,  85,
+    149, 228, 220,  15,  27, 239, 187,  97, 224, 189, 105, 210,
+     53,  72, 233,   6, 110, 123,  76,   6, 248, 143,  27,  24,
+     59, 121,  65, 239, 140, 124, 125, 109,   0, 133,  23, 128,
+     50, 101,  93,  70,
+    ... 16504 more items
+  ]
+}
+Approving 32767 FakeEUR to Fugazi...
+Approved 32767 FakeEUR to Fugazi. tx hash: 0x5eff75b5d8792a1de6c6529206e6a9d630fc6148c7baf1a0dac080af9b7b57b6
+Depositing 32767 FakeEUR to Fugazi...
+Deposited 32767 FakeEUR to Fugazi. tx hash: 0x3a1821ce11d2e750640b979cbd4d9a32710983d70008c84e99e2c879a8b83fb4
+Got decrypted balance in wallet after deposit: 0
+Got decrypted balance in Fugazi after deposit: 23392
+**************************************************
+Running createPool: creating pool for FakeFGZ and FakeUSD
+Getting pool id before creation...
+Pool Id for FakeFGZ and FakeUSD: 0x0000000000000000000000000000000000000000000000000000000000000000
+Getting token balances before creation...
+Got decrypted balance of FakeFGZ in Fugazi before creation: 23392
+Got decrypted balance of FakeUSD in Fugazi before creation: 23392
+Constructing input...
+AmountX in binary:  1110000100000
+AmountY in binary:  1110000100000
+Input number in binary:  1110000100000001110000100000
+Creating pool...
+Created pool for FakeFGZ and FakeUSD. tx hash: 0xd1fcaee8210dc2a6f824bb4d7a83bc9abfa9cf1d1088492e2c63569d9b635abc
+Getting pool id after creation...
+Donating to the pool...
+Donated to the pool for FakeFGZ and FakeUSD. tx hash: 0xbf7c910cc5d1be1e052dcac3c387d2617d1f837708a1a8a101e4475dc7cd3557
+Getting token balances after creation...
+Got decrypted balance of FakeFGZ in Fugazi after creation: 15392
+Got decrypted balance of FakeUSD in Fugazi after creation: 15392
+Getting LP token balance after creation...
+Got decrypted LP balance of LP token in Fugazi after creation: 7171
+**************************************************
+Running createPool: creating pool for FakeUSD and FakeEUR
+Getting pool id before creation...
+Pool Id for FakeUSD and FakeEUR: 0x0000000000000000000000000000000000000000000000000000000000000000
+Getting token balances before creation...
+Got decrypted balance of FakeUSD in Fugazi before creation: 15392
+Got decrypted balance of FakeEUR in Fugazi before creation: 23392
+Constructing input...
+AmountX in binary:  1110000100000
+AmountY in binary:  1110000100000
+Input number in binary:  1110000100000001110000100000
+Creating pool...
+Created pool for FakeUSD and FakeEUR. tx hash: 0x6b9791f864ce1614eb949934f428322cc638e95e03314024d3ec2e88bf394db6
+Getting pool id after creation...
+Donating to the pool...
+Donated to the pool for FakeUSD and FakeEUR. tx hash: 0x92f49d211474fb007bcd22da5f8e27bcf454e097b348eb98beb1739cef1fd7d6
+Getting token balances after creation...
+Got decrypted balance of FakeUSD in Fugazi after creation: 7392
+Got decrypted balance of FakeEUR in Fugazi after creation: 15392
+Getting LP token balance after creation...
+Got decrypted LP balance of LP token in Fugazi after creation: 7171
+**************************************************
+Running createPool: creating pool for FakeFGZ and FakeEUR
+Getting pool id before creation...
+Pool Id for FakeFGZ and FakeEUR: 0x0000000000000000000000000000000000000000000000000000000000000000
+Getting token balances before creation...
+Got decrypted balance of FakeFGZ in Fugazi before creation: 15392
+Got decrypted balance of FakeEUR in Fugazi before creation: 15392
+Constructing input...
+AmountX in binary:  1110000100000
+AmountY in binary:  1110000100000
+Input number in binary:  1110000100000001110000100000
+Creating pool...
+Created pool for FakeFGZ and FakeEUR. tx hash: 0x68d815bee750340385738cf74be94b47ced66e3f59fe3d109af2a0ddb6c5b50b
+Getting pool id after creation...
+Donating to the pool...
+Donated to the pool for FakeFGZ and FakeEUR. tx hash: 0xdfc34ad1baf77f9a6d89407a6f0610f6a5ca548ba80744fd38c287326d16540c
+Getting token balances after creation...
+Got decrypted balance of FakeFGZ in Fugazi after creation: 7392
+Got decrypted balance of FakeEUR in Fugazi after creation: 7392
+Getting LP token balance after creation...
+Got decrypted LP balance of LP token in Fugazi after creation: 7171
+**************************************************
+Running getPoolInfo: getting pool info for FakeFGZ and FakeUSD
+Getting pool id...
+Pool Id for FakeFGZ and FakeUSD: 0xe5272bb14a4397cd77dc45d4b126c86a05b6a84b8cf7c08d321079583f6f3a82
+Getting pool info...
+Pool Info for FakeFGZ and FakeUSD:
+Current Epoch: 0
+Last Settlement: 2024-09-05T13:12:28.000Z
+**************************************************
+Running getPoolInfo: getting pool info for FakeUSD and FakeEUR
+Getting pool id...
+Pool Id for FakeUSD and FakeEUR: 0xb06e36adc894e9b720a46330b83e9622f093bb4867c8d3faf61282a9fcdc2e01
+Getting pool info...
+Pool Info for FakeUSD and FakeEUR:
+Current Epoch: 0
+Last Settlement: 2024-09-05T13:12:56.000Z
+**************************************************
+Running getPoolInfo: getting pool info for FakeEUR and FakeFGZ
+Getting pool id...
+Pool Id for FakeEUR and FakeFGZ: 0x20c6a1487f7b228d3eb292c560a5112481371a30bdb1a7584d240bb9fbdaba3d
+Getting pool info...
+Pool Info for FakeEUR and FakeFGZ:
+Current Epoch: 0
+Last Settlement: 2024-09-05T13:13:25.000Z
+**************************************************
+Running removeLiquidity: removing 100 liquidity from pool of FakeFGZ and FakeUSD
+Checking balances before removing liquidity...
+Getting token balances before removing liquidity...
+Got decrypted balance of FakeFGZ in Fugazi before removing liquidity: 7392
+Got decrypted balance of FakeUSD in Fugazi before removing liquidity: 7392
+Getting LP token balance before removing liquidity...
+Got decrypted LP balance in Fugazi before removing liquidity: 7171
+Removing liquidity...
+Removed 100 liquidity from pool. tx hash: 0x29989fddde8462f7b96a35ca91269c1891c8201bb07222c2caa28753cce6561b
+Checking balances after removing liquidity...
+Getting token balances after removing liquidity...
+Got decrypted balance of FakeFGZ in Fugazi after removing liquidity: 7492
+Got decrypted balance of FakeUSD in Fugazi after removing liquidity: 7492
+Getting LP token balance after removing liquidity...
+Got decrypted LP balance in Fugazi after removing liquidity: 7071
+**************************************************
+Running removeLiquidity: removing 100 liquidity from pool of FakeUSD and FakeEUR
+Checking balances before removing liquidity...
+Getting token balances before removing liquidity...
+Got decrypted balance of FakeUSD in Fugazi before removing liquidity: 7492
+Got decrypted balance of FakeEUR in Fugazi before removing liquidity: 7392
+Getting LP token balance before removing liquidity...
+Got decrypted LP balance in Fugazi before removing liquidity: 7171
+Removing liquidity...
+Removed 100 liquidity from pool. tx hash: 0xa042645461712e101810723dd56739aa54643ef19876ae1826930070adfcd332
+Checking balances after removing liquidity...
+Getting token balances after removing liquidity...
+Got decrypted balance of FakeUSD in Fugazi after removing liquidity: 7592
+Got decrypted balance of FakeEUR in Fugazi after removing liquidity: 7492
+Getting LP token balance after removing liquidity...
+Got decrypted LP balance in Fugazi after removing liquidity: 7071
+**************************************************
+Running removeLiquidity: removing 100 liquidity from pool of FakeEUR and FakeFGZ
+Checking balances before removing liquidity...
+Getting token balances before removing liquidity...
+Got decrypted balance of FakeEUR in Fugazi before removing liquidity: 7492
+Got decrypted balance of FakeFGZ in Fugazi before removing liquidity: 7492
+Getting LP token balance before removing liquidity...
+Got decrypted LP balance in Fugazi before removing liquidity: 7171
+Removing liquidity...
+Removed 100 liquidity from pool. tx hash: 0xb962b7cefaac5f8544080bea389f59ee40f098099fa3ac218d328c155fef3960
+Checking balances after removing liquidity...
+Getting token balances after removing liquidity...
+Got decrypted balance of FakeEUR in Fugazi after removing liquidity: 7592
+Got decrypted balance of FakeFGZ in Fugazi after removing liquidity: 7592
+Getting LP token balance after removing liquidity...
+Got decrypted LP balance in Fugazi after removing liquidity: 7071
+**************************************************
+Running addLiquidity: adding 1024 FakeFGZ and 1024 FakeUSD to pool
+Noise Level: 0%
+Enabling noise...
+Enabled noise: 0xbd1896121e37bd9278eda1b23d9667727759f8cb6f0819cf32479c8759c10c48
+Checking balances before adding liquidity...
+Getting token balances before adding liquidity...
+Balance of FakeFGZ before adding liquidity: 7592n
+Balance of FakeUSD before adding liquidity: 7592n
+Getting LP token balance before adding liquidity...
+LP balance of LP token in Fugazi before adding liquidity: 7071n
+Constructing input for liquidity provision...
+Packed amount in binary:  1000010000000000000010000000000
+value: 42000400
+Providing 1024 FakeFGZ and 1024 FakeUSD to pool...
+HeadersTimeoutError: Headers Timeout Error
+    at Timeout.onParserTimeout [as callback] (/Users/kosunghun/codes/projects/fugazi-core-ethonline2024/node_modules/undici/lib/client.js:1048:28)
+    at Timeout.onTimeout [as _onTimeout] (/Users/kosunghun/codes/projects/fugazi-core-ethonline2024/node_modules/undici/lib/timers.js:20:13)
+    at listOnTimeout (node:internal/timers:573:17)
+    at processTimers (node:internal/timers:514:7) {
+  code: 'UND_ERR_HEADERS_TIMEOUT'
+}
+Waiting for 1 minute...
+Checking unclaimed order...
+Unclaimed order: Result(2) [
+  '0xe5272bb14a4397cd77dc45d4b126c86a05b6a84b8cf7c08d321079583f6f3a82',
+  0n
+]
+Settling batch...
+Settled batch: 0x7c944c8b02d78550ddf9acbf094f6b350d27c5060c7a60b3af4ae32e2cb7636f
+Claiming...
+Claimed: 0x2d288b6f3aeb5ae171473b3c310a74d2a1fecfd1350c144818b18a0edfeca4de
+Checking balances after adding liquidity...
+Balance of FakeFGZ after adding liquidity: 6568n
+Balance of FakeUSD after adding liquidity: 6568n
+Getting LP token balance after adding liquidity...
+LP balance of LP token in Fugazi after adding liquidity: 8090n
+**************************************************
+Running addLiquidity: adding 1024 FakeUSD and 1024 FakeEUR to pool
+Noise Level: 50%
+Enabling noise...
+Enabled noise: 0xb6e3b58cd72a219109a50c3e96488755d67c47b5663ed3b04d4c90b0ffc36922
+Checking balances before adding liquidity...
+Getting token balances before adding liquidity...
+Balance of FakeUSD before adding liquidity: 6568n
+Balance of FakeEUR before adding liquidity: 7592n
+Getting LP token balance before adding liquidity...
+LP balance of LP token in Fugazi before adding liquidity: 7071n
+Constructing input for liquidity provision...
+Packed amount in binary:  100000000011000010000000000000010000000000
+value: 200c2000400
+Providing 1024 FakeUSD and 1024 FakeEUR to pool...
+HeadersTimeoutError: Headers Timeout Error
+    at Timeout.onParserTimeout [as callback] (/Users/kosunghun/codes/projects/fugazi-core-ethonline2024/node_modules/undici/lib/client.js:1048:28)
+    at Timeout.onTimeout [as _onTimeout] (/Users/kosunghun/codes/projects/fugazi-core-ethonline2024/node_modules/undici/lib/timers.js:20:13)
+    at listOnTimeout (node:internal/timers:573:17)
+    at processTimers (node:internal/timers:514:7) {
+  code: 'UND_ERR_HEADERS_TIMEOUT'
+}
+Waiting for 1 minute...
+Checking unclaimed order...
+Unclaimed order: Result(2) [
+  '0xb06e36adc894e9b720a46330b83e9622f093bb4867c8d3faf61282a9fcdc2e01',
+  0n
+]
+Settling batch...
+Settled batch: 0x8c7872abe56185f2923cd3a34fa082d0438a25c60b9722ccf24e89e586423699
+Claiming...
+Claimed: 0x8bd2f58e9ff938c75aecfcaf5297e5356c55352188962492a94f03160980287a
+Checking balances after adding liquidity...
+Balance of FakeUSD after adding liquidity: 5508n
+Balance of FakeEUR after adding liquidity: 6568n
+Getting LP token balance after adding liquidity...
+LP balance of LP token in Fugazi after adding liquidity: 8090n
+**************************************************
+Running addLiquidity: adding 1024 FakeEUR and 1024 FakeFGZ to pool
+Noise Level: 100%
+Enabling noise...
+Enabled noise: 0xa8b652c535a27a614a6dc3729297a04c6315e96e2bfd83fa83979fe6a7244997
+Checking balances before adding liquidity...
+Getting token balances before adding liquidity...
+Balance of FakeEUR before adding liquidity: 6568n
+Balance of FakeFGZ before adding liquidity: 6568n
+Getting LP token balance before adding liquidity...
+LP balance of LP token in Fugazi before adding liquidity: 7071n
+Constructing input for liquidity provision...
+Packed amount in binary:  1000000000001000010000000000000010000000000
+value: 40042000400
+Providing 1024 FakeEUR and 1024 FakeFGZ to pool...
+HeadersTimeoutError: Headers Timeout Error
+    at Timeout.onParserTimeout [as callback] (/Users/kosunghun/codes/projects/fugazi-core-ethonline2024/node_modules/undici/lib/client.js:1048:28)
+    at Timeout.onTimeout [as _onTimeout] (/Users/kosunghun/codes/projects/fugazi-core-ethonline2024/node_modules/undici/lib/timers.js:20:13)
+    at listOnTimeout (node:internal/timers:573:17)
+    at processTimers (node:internal/timers:514:7) {
+  code: 'UND_ERR_HEADERS_TIMEOUT'
+}
+Waiting for 1 minute...
+Checking unclaimed order...
+Unclaimed order: Result(2) [
+  '0x20c6a1487f7b228d3eb292c560a5112481371a30bdb1a7584d240bb9fbdaba3d',
+  0n
+]
+Settling batch...
+Settled batch: 0x5e819813d2856f9117e0fb773026644317f501f721551711df74d63b4a3bff2c
+Claiming...
+Claimed: 0xeed1278c1427a310a80e195190f2fd0fc359470ba1297f098db6c60e5da66bdc
+Checking balances after adding liquidity...
+Balance of FakeEUR after adding liquidity: 5397n
+Balance of FakeFGZ after adding liquidity: 5544n
+Getting LP token balance after adding liquidity...
+LP balance of LP token in Fugazi after adding liquidity: 8090n
+**************************************************
+Running swap: swapping 1024 FakeFGZ for FakeUSD.
+Noise Level: 100%
+Enabling noise...
+Enabled noise: 0x748728ef9e57785b0e99512c52791d9c1dc41f692b4415d3eecaad107fc29855
+Checking balances before swap...
+Getting token balances before swapping...
+Balance of FakeFGZ before swap: 5544
+Balance of FakeUSD before swap: 5508
+Constructing input for swap...
+Packed amount in binary:  1000000000010000010000000000000000000000000
+value: 40082000000
+Swapping 1024 FakeFGZ for FakeUSD...
+HeadersTimeoutError: Headers Timeout Error
+    at Timeout.onParserTimeout [as callback] (/Users/kosunghun/codes/projects/fugazi-core-ethonline2024/node_modules/undici/lib/client.js:1048:28)
+    at Timeout.onTimeout [as _onTimeout] (/Users/kosunghun/codes/projects/fugazi-core-ethonline2024/node_modules/undici/lib/timers.js:20:13)
+    at listOnTimeout (node:internal/timers:573:17)
+    at processTimers (node:internal/timers:514:7) {
+  code: 'UND_ERR_HEADERS_TIMEOUT'
+}
+Waiting for 1 minute...
+Checking unclaimed order...
+Unclaimed order: Result(2) [
+  '0xe5272bb14a4397cd77dc45d4b126c86a05b6a84b8cf7c08d321079583f6f3a82',
+  1n
+]
+Settling batch...
+Settled batch: 0xb6be55e28b9b802e570ebb7036fe06daa4571e46a1884a5bbbe8f0cfbb6ca1c9
+Claiming...
+Claimed: 0x4ee23bea07a5f3b97cabe981ee2e2e169051e51a93676332a3baccdbe01ae47d
+Checking balances after swapping...
+Getting token balances after swapping...
+Balance of FakeFGZ after swap: 4520
+Balance of FakeUSD after swap: 6323
+**************************************************
+Running swap: swapping 1024 FakeUSD for FakeEUR.
+Noise Level: 150%
+Enabling noise...
+Enabled noise: 0xa4f819f48d576d00dd093934485adb4abd1554fc5cdaf2ca9a6586c50975ec2e
+Checking balances before swap...
+Getting token balances before swapping...
+Balance of FakeUSD before swap: 6323
+Balance of FakeEUR before swap: 5397
+Constructing input for swap...
+Packed amount in binary:  1100000000000000000000000000000010000000000
+value: 60000000400
+Swapping 1024 FakeUSD for FakeEUR...
+HeadersTimeoutError: Headers Timeout Error
+    at Timeout.onParserTimeout [as callback] (/Users/kosunghun/codes/projects/fugazi-core-ethonline2024/node_modules/undici/lib/client.js:1048:28)
+    at Timeout.onTimeout [as _onTimeout] (/Users/kosunghun/codes/projects/fugazi-core-ethonline2024/node_modules/undici/lib/timers.js:20:13)
+    at listOnTimeout (node:internal/timers:573:17)
+    at processTimers (node:internal/timers:514:7) {
+  code: 'UND_ERR_HEADERS_TIMEOUT'
+}
+Waiting for 1 minute...
+Checking unclaimed order...
+Unclaimed order: Result(2) [
+  '0xb06e36adc894e9b720a46330b83e9622f093bb4867c8d3faf61282a9fcdc2e01',
+  1n
+]
+Settling batch...
+Settled batch: 0x601bf05709164d34b94c0c7a4037687940ee33d3883c42aed75ffd0ded1e30a8
+Claiming...
+Claimed: 0x894f136f1a6194c846c3075b66c49fa2ba9b82fd2f6ebae3e5233513e008104c
+Checking balances after swapping...
+Getting token balances after swapping...
+Balance of FakeUSD after swap: 5299
+Balance of FakeEUR after swap: 6129
+**************************************************
+Running swap: swapping 1024 FakeEUR for FakeFGZ.
+Noise Level: 199.90234375%
+Enabling noise...
+Enabled noise: 0x68581dee36526bb868db4fbf809d011661dfda4c19f19c4f55421bb0946f8702
+Checking balances before swap...
+Getting token balances before swapping...
+Balance of FakeEUR before swap: 6129
+Balance of FakeFGZ before swap: 4520
+Constructing input for swap...
+Packed amount in binary:  1111111111110000010000000000000000000000000
+value: 7ff82000000
+Swapping 1024 FakeEUR for FakeFGZ...
+HeadersTimeoutError: Headers Timeout Error
+    at Timeout.onParserTimeout [as callback] (/Users/kosunghun/codes/projects/fugazi-core-ethonline2024/node_modules/undici/lib/client.js:1048:28)
+    at Timeout.onTimeout [as _onTimeout] (/Users/kosunghun/codes/projects/fugazi-core-ethonline2024/node_modules/undici/lib/timers.js:20:13)
+    at listOnTimeout (node:internal/timers:573:17)
+    at processTimers (node:internal/timers:514:7) {
+  code: 'UND_ERR_HEADERS_TIMEOUT'
+}
+Waiting for 1 minute...
+Checking unclaimed order...
+Unclaimed order: Result(2) [
+  '0x20c6a1487f7b228d3eb292c560a5112481371a30bdb1a7584d240bb9fbdaba3d',
+  1n
+]
+Settling batch...
+Settled batch: 0x7f5f9af5abbdbdc799f52aa021cdb24286eb167b352d0460480e0388a5d14cfc
+Claiming...
+Claimed: 0xf3f6c372505dda5e7512ae7ec248591270772dc0b0f1c73985ee40b2ccf075f8
+Checking balances after swapping...
+Getting token balances after swapping...
+Balance of FakeEUR after swap: 5105
+Balance of FakeFGZ after swap: 5478

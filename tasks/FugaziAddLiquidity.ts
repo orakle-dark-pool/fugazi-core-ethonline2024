@@ -10,10 +10,10 @@ import chalk from "chalk";
 task("task:addLiquidity")
   .addParam("name0", "Name of the token to provide liquidity", "FakeFGZ")
   .addParam("name1", "Name of the token to provide liquidity", "FakeEUR")
-  .addParam("amount0", "Amount of token0 to provide", "512")
-  .addParam("amount1", "Amount of token1 to provide", "512")
+  .addParam("amount0", "Amount of token0 to provide", "1024")
+  .addParam("amount1", "Amount of token1 to provide", "1024")
   .addParam("payprivacyfeein0", "Pay privacy fee in token0", "0")
-  .addParam("noiseamplitude", "Noise amplitude", "512")
+  .addParam("noiseamplitude", "Noise amplitude", "0")
   .setAction(async function (taskArguments: TaskArguments, hre) {
     const { fhenixjs, ethers, deployments } = hre;
     const [signer] = await ethers.getSigners();
@@ -173,6 +173,7 @@ task("task:addLiquidity")
 
       // print the final packed amount in binary
       console.log("Packed amount in binary: ", packedAmount.toString(2));
+
       // Encrypt the packed amount using fhenixjs.encrypt_euint64()
       const encryptedPackedAmount = await fhenixjs.encrypt_uint64(packedAmount);
 
@@ -266,6 +267,8 @@ task("task:addLiquidity")
       console.log("Failed to claim", e);
     }
     await new Promise((resolve) => setTimeout(resolve, 60 * 1000));
+
+    // claimProtocolOrder
 
     ///////////////////////////////////////////////////////////////
     //                    after addLiquidity                     //

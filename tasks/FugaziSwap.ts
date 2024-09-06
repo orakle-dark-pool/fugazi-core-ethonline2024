@@ -9,9 +9,9 @@ import chalk from "chalk";
 
 task("task:swap")
   .addParam("namein", "Name of the token to sell", "FakeEUR")
-  .addParam("amountin", "Amount of token to sell", "256")
+  .addParam("amountin", "Amount of token to sell", "1024")
   .addParam("nameout", "Name of the token to buy", "FakeFGZ")
-  .addParam("noiseamplitude", "Noise amplitude", "1024")
+  .addParam("noiseamplitude", "Noise amplitude", "0")
   .setAction(async function (taskArguments: TaskArguments, hre) {
     const { fhenixjs, ethers, deployments } = hre;
     const [signer] = await ethers.getSigners();

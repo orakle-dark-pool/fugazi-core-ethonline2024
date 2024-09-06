@@ -4,4 +4,5 @@ This repo contains smart contracts for Fugazi, the first fully on-chain dark poo
 
 # TODO
 
-add scripts for swap, LPing, settle, view unclaimed orders and claim them
+add claimProtocolOrder script in poolAction tasks
+fill the readme file

@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "fugazi-core-ethonline2024"
+version = "0.1.0"
+description = ""
+authors = ["kosunghun317 <kosunghun317@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.12,<3.13"
+ipykernel = "^6.29.5"
+black = {extras = ["jupyter"], version = "^24.8.0"}
+eth-ape = "^0.8.14"
+python-dotenv = "^1.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
