@@ -20,7 +20,7 @@ source ./run_tasks.sh
 
 # Claim Protocol-owned Account's orders
 
-Just like convex, opyn, yearn, and other dApps do, claim of protocol-owned account's orders are not handled by centralized entity--instead, anyone can claim them on behalf of protocol and get paid reward for their work. We have example python script. Try followin:
+Just like convex, opyn, yearn, and other dApps do, claim of protocol-owned account's orders are not handled by centralized entity; instead, anyone can claim them on behalf of protocol and get paid reward for their work. We have example python script. Try followin:
 
 ```
 poetry run python ./protocol_order_claimer/check_and_claim.py
