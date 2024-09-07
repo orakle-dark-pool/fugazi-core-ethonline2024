@@ -279,22 +279,22 @@ task("task:swap")
     );
     await new Promise((resolve) => setTimeout(resolve, 90000));
 
-    // claim protocol order
-    console.log("Claiming protocol order... ");
-    try {
-      const tx = await FugaziPoolActionFacet.claimProtocolOrder(
-        unclaimedOrder[0],
-        unclaimedOrder[1]
-      );
-      console.log("Claimed protocol order:", tx.hash);
-    } catch (e) {
-      console.log("Failed to claim protocol order", e);
-    }
+    // // claim protocol order
+    // console.log("Claiming protocol order... ");
+    // try {
+    //   const tx = await FugaziPoolActionFacet.claimProtocolOrder(
+    //     unclaimedOrder[0],
+    //     unclaimedOrder[1]
+    //   );
+    //   console.log("Claimed protocol order:", tx.hash);
+    // } catch (e) {
+    //   console.log("Failed to claim protocol order", e);
+    // }
 
-    // wait for 90 seconds
-    console.log(
-      "Waiting for 90 seconds for chain to reflect the state transition... "
-    );
+    // // wait for 90 seconds
+    // console.log(
+    //   "Waiting for 90 seconds for chain to reflect the state transition... "
+    // );
 
     ///////////////////////////////////////////////////////////////
     //                       After swap                          //

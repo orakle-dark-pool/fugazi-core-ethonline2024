@@ -37,8 +37,6 @@ FugaziPoolAction = w3.eth.contract(
 )
 
 while True:
-    # wait for 3 minutes
-    time.sleep(180)
     print("*" * 50)
     # check total unclaimed orders
     totalUnclaimedOrders = (
@@ -77,3 +75,6 @@ while True:
                 tx_hash = w3.eth.send_raw_transaction(signed_tx.rawTransaction)
             except Exception as e:
                 print(f"Error: {e}")
+    
+    # wait for 3 minutes
+    time.sleep(180)
