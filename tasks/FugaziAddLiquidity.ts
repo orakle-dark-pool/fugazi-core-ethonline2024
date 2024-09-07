@@ -225,9 +225,11 @@ task("task:addLiquidity")
       console.error(error);
     }
 
-    // wait for 1 minute
-    console.log("Waiting for 1 minute... ");
-    await new Promise((r) => setTimeout(r, 60000));
+    // wait for 90 seconds
+    console.log(
+      "Waiting for 90 seconds for chain to reflect the state transition... "
+    );
+    await new Promise((resolve) => setTimeout(resolve, 90000));
 
     // check the last unclaimedOrder
     console.log("Checking unclaimed order... ");
@@ -250,7 +252,12 @@ task("task:addLiquidity")
     } catch (e) {
       console.log("Failed to settle batch", e);
     }
-    await new Promise((resolve) => setTimeout(resolve, 60 * 1000));
+
+    // wait for 90 seconds
+    console.log(
+      "Waiting for 90 seconds for chain to reflect the state transition... "
+    );
+    await new Promise((resolve) => setTimeout(resolve, 90000));
 
     ///////////////////////////////////////////////////////////////
     //                          claim                            //
@@ -266,9 +273,29 @@ task("task:addLiquidity")
     } catch (e) {
       console.log("Failed to claim", e);
     }
-    await new Promise((resolve) => setTimeout(resolve, 60 * 1000));
+
+    // wait for 90 seconds
+    console.log(
+      "Waiting for 90 seconds for chain to reflect the state transition... "
+    );
+    await new Promise((resolve) => setTimeout(resolve, 90000));
 
     // claimProtocolOrder
+    console.log("Claiming protocol owned account's order... ");
+    try {
+      const tx = await FugaziPoolActionFacet.claimProtocolOrder(
+        unclaimedOrder[0],
+        unclaimedOrder[1]
+      );
+      console.log("Claimed protocol owned account's order:", tx.hash);
+    } catch (e) {
+      console.log("Failed to claim protocol owned account's order", e);
+    }
+
+    // wait for 90 seconds
+    console.log(
+      "Waiting for 90 seconds for chain to reflect the state transition... "
+    );
 
     ///////////////////////////////////////////////////////////////
     //                    after addLiquidity                     //

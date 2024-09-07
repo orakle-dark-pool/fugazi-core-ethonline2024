@@ -127,6 +127,12 @@ task("task:removeLiquidity")
       console.log("Failed to remove liquidity", e);
     }
 
+    // wait for 90 seconds
+    console.log(
+      "Waiting for 90 seconds for chain to reflect the state transition... "
+    );
+    await new Promise((resolve) => setTimeout(resolve, 90000));
+
     ///////////////////////////////////////////////////////////////
     //                   After removeLiquidity                   //
     ///////////////////////////////////////////////////////////////

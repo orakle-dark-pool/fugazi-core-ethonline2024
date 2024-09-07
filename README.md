@@ -1,7 +1,7 @@
 # fugazi-core-ethonline2024
 
 This repo contains smart contracts for Fugazi, the first fully on-chain dark pool built on Fhenix.
-For some successful transactions, due to the performance issue related to FHE, they may not return transaction hash and return error such as TimeOutError or NonceTooLowError. However, as long as it is not reverted, chain will eventually update the state and everything will be fine.
+For some successful transactions, due to the performance issue related to FHE, they may not return transaction hash and return error such as HeadersTimeoutError or NonceTooLowError. However, as long as it is not reverted, chain will eventually update the state and everything will be fine.
 
 # Installaration
 

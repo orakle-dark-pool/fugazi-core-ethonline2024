@@ -159,8 +159,10 @@ contract FugaziPoolActionFacet is FugaziStorageLayout {
 
         // claim the lp token from the batch
         euint32 claimableLP = FHE.min(
-            (batch.lpIncrement * batch.order[trader].mintX) / batch.mintX,
-            (batch.lpIncrement * batch.order[trader].mintY) / batch.mintY
+            (batch.lpIncrement * batch.order[trader].mintX) /
+                FHE.max(batch.mintX, FHE.asEuint32(1)), // to prevent division by zero
+            (batch.lpIncrement * batch.order[trader].mintY) /
+                FHE.max(batch.mintY, FHE.asEuint32(1)) // to prevent division by zero
         ); /*
             Again, this is underestimation. Correct formula will be used once the gas usage becomes affordable.
            */

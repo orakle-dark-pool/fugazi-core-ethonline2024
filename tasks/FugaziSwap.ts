@@ -9,7 +9,7 @@ import chalk from "chalk";
 
 task("task:swap")
   .addParam("namein", "Name of the token to sell", "FakeEUR")
-  .addParam("amountin", "Amount of token to sell", "1024")
+  .addParam("amountin", "Amount of token to sell", "512")
   .addParam("nameout", "Name of the token to buy", "FakeFGZ")
   .addParam("noiseamplitude", "Noise amplitude", "0")
   .setAction(async function (taskArguments: TaskArguments, hre) {
@@ -113,6 +113,19 @@ task("task:swap")
       `Balance of ${taskArguments.nameout} before swap: ${decryptedBalanceOutBefore}`
     );
 
+    // get LP token balance before swapping
+    console.log("Getting LP token balance before swapping... ");
+    const encryptedLPBalanceBefore = await FugaziViewerFacet.getLPBalance(
+      inputTokenAddress,
+      outputTokenAddress,
+      permitForFugazi
+    );
+    const decryptedLPBalanceBefore = fhenixjs.unseal(
+      FugaziCoreDeployment.address,
+      encryptedLPBalanceBefore
+    );
+    console.log(`LP Balance before swap: ${decryptedLPBalanceBefore}`);
+
     ///////////////////////////////////////////////////////////////
     //                           swap                            //
     ///////////////////////////////////////////////////////////////
@@ -211,9 +224,11 @@ task("task:swap")
       console.error(error);
     }
 
-    // wait for 1 minute
-    console.log("Waiting for 1 minute... ");
-    await new Promise((r) => setTimeout(r, 60000));
+    // wait for 90 seconds
+    console.log(
+      "Waiting for 90 seconds for chain to reflect the state transition... "
+    );
+    await new Promise((resolve) => setTimeout(resolve, 90000));
 
     // check the last unclaimedOrder
     console.log("Checking unclaimed order... ");
@@ -236,7 +251,12 @@ task("task:swap")
     } catch (e) {
       console.log("Failed to settle batch", e);
     }
-    await new Promise((resolve) => setTimeout(resolve, 60 * 1000));
+
+    // wait for 90 seconds
+    console.log(
+      "Waiting for 90 seconds for chain to reflect the state transition... "
+    );
+    await new Promise((resolve) => setTimeout(resolve, 90000));
 
     ///////////////////////////////////////////////////////////////
     //                          claim                            //
@@ -252,7 +272,29 @@ task("task:swap")
     } catch (e) {
       console.log("Failed to claim", e);
     }
-    await new Promise((resolve) => setTimeout(resolve, 60 * 1000));
+
+    // wait for 90 seconds
+    console.log(
+      "Waiting for 90 seconds for chain to reflect the state transition... "
+    );
+    await new Promise((resolve) => setTimeout(resolve, 90000));
+
+    // claim protocol order
+    console.log("Claiming protocol order... ");
+    try {
+      const tx = await FugaziPoolActionFacet.claimProtocolOrder(
+        unclaimedOrder[0],
+        unclaimedOrder[1]
+      );
+      console.log("Claimed protocol order:", tx.hash);
+    } catch (e) {
+      console.log("Failed to claim protocol order", e);
+    }
+
+    // wait for 90 seconds
+    console.log(
+      "Waiting for 90 seconds for chain to reflect the state transition... "
+    );
 
     ///////////////////////////////////////////////////////////////
     //                       After swap                          //
@@ -285,4 +327,17 @@ task("task:swap")
     console.log(
       `Balance of ${taskArguments.nameout} after swap: ${decryptedBalanceOutAfter}`
     );
+
+    // get LP token balance after swapping
+    console.log("Getting LP token balance after swapping... ");
+    const encryptedLPBalanceAfter = await FugaziViewerFacet.getLPBalance(
+      inputTokenAddress,
+      outputTokenAddress,
+      permitForFugazi
+    );
+    const decryptedLPBalanceAfter = fhenixjs.unseal(
+      FugaziCoreDeployment.address,
+      encryptedLPBalanceAfter
+    );
+    console.log(`LP Balance after swap: ${decryptedLPBalanceAfter}`);
   });
